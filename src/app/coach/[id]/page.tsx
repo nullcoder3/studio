@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound } from 'next/navigation';
+import { notFound, useParams } from 'next/navigation';
 import { coaches } from '@/lib/data';
 import { useHolidays } from '@/hooks/use-holidays';
 import { calculateWorkingDays } from '@/lib/date-utils';
@@ -11,8 +11,10 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
 
-export default function CoachDetailsPage({ params }: { params: { id: string } }) {
-  const coach = coaches.find((c) => c.id === params.id);
+export default function CoachDetailsPage() {
+  const params = useParams();
+  const coachId = typeof params.id === 'string' ? params.id : '';
+  const coach = coaches.find((c) => c.id === coachId);
   const { holidays, isLoading } = useHolidays();
 
   if (!coach) {
