@@ -18,11 +18,12 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { addCoachSchema, workTypes } from "@/lib/schemas";
-import { addCoach } from "@/lib/actions";
+import { useCoaches } from "@/hooks/use-coaches";
 
 export default function AddCoachPage() {
   const { toast } = useToast();
   const router = useRouter();
+  const { addCoach } = useCoaches();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   const form = useForm<z.infer<typeof addCoachSchema>>({
@@ -37,22 +38,24 @@ export default function AddCoachPage() {
 
   async function onSubmit(values: z.infer<typeof addCoachSchema>) {
     setIsSubmitting(true);
-    const result = await addCoach(values);
+    
+    // Simulate async operation for better UX
+    await new Promise(resolve => setTimeout(resolve, 500));
+
+    addCoach({
+      coachNumber: values.coachNumber,
+      offeredDate: values.offeredDate,
+      workTypes: values.workTypes,
+      notes: values.additionalNotes,
+    });
+    
     setIsSubmitting(false);
 
-    if (result.success) {
-      toast({
-        title: "Coach Added",
-        description: `Coach ${values.coachNumber} has been successfully registered.`,
-      });
-      router.push('/');
-    } else {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: result.message || "An unknown error occurred.",
-      });
-    }
+    toast({
+      title: "Coach Added",
+      description: `Coach ${values.coachNumber} has been successfully registered.`,
+    });
+    router.push('/');
   }
 
   return (

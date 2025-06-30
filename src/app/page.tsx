@@ -1,8 +1,13 @@
+"use client";
+
 import Link from 'next/link';
-import { coaches } from '@/lib/data';
+import { useCoaches } from '@/hooks/use-coaches';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
+  const { coaches, isLoading } = useCoaches();
+
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className="mb-8 animate-fade-in-down">
@@ -12,7 +17,15 @@ export default function Home() {
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-        {coaches.map((coach, index) => (
+        {isLoading ? (
+          Array.from({ length: 5 }).map((_, index) => (
+            <div key={index}>
+              <Card className="h-40 flex items-center justify-center">
+                 <Skeleton className="h-10 w-24" />
+              </Card>
+            </div>
+          ))
+        ) : coaches.map((coach, index) => (
           <Link href={`/coach/${coach.id}`} key={coach.id} className="group">
             <div
               className="animate-fade-in-up"

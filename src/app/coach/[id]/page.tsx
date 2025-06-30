@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound, useParams } from 'next/navigation';
-import { coaches } from '@/lib/data';
+import { useCoaches } from '@/hooks/use-coaches';
 import { useHolidays } from '@/hooks/use-holidays';
 import { calculateWorkingDays } from '@/lib/date-utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -11,17 +11,79 @@ import { Badge } from '@/components/ui/badge';
 import { Calendar, Clock, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
 
+function CoachDetailsSkeleton() {
+  return (
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-pulse">
+      <div className="mb-8">
+        <Skeleton className="h-12 w-1/3" />
+        <Skeleton className="h-6 w-2/3 mt-4" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center">
+              <Calendar className="h-5 w-5 mr-3 text-muted-foreground" />
+              <div className="w-full space-y-2">
+                <p className="font-semibold">Date Offered</p>
+                <Skeleton className="h-5 w-24" />
+              </div>
+            </div>
+             <div className="flex items-center">
+              <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
+              <div className="w-full space-y-2">
+                <p className="font-semibold">Working Days</p>
+                <Skeleton className="h-5 w-12" />
+              </div>
+            </div>
+            <div className="flex items-start pt-2">
+              <Wrench className="h-5 w-5 mr-3 text-muted-foreground flex-shrink-0 mt-1" />
+              <div className="w-full space-y-2">
+                <p className="font-semibold">Work Types</p>
+                <Skeleton className="h-5 w-20" />
+                <Skeleton className="h-5 w-24" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Materials Used</CardTitle>
+            <CardDescription>List of materials with ownership details.</CardDescription>
+          </CardHeader>
+          <CardContent>
+             <div className="space-y-2">
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+                <Skeleton className="h-8 w-full" />
+              </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
+}
+
+
 export default function CoachDetailsPage() {
   const params = useParams();
   const coachId = typeof params.id === 'string' ? params.id : '';
+  const { coaches, isLoading: isLoadingCoaches } = useCoaches();
+  const { holidays, isLoading: isLoadingHolidays } = useHolidays();
+
   const coach = coaches.find((c) => c.id === coachId);
-  const { holidays, isLoading } = useHolidays();
+
+  if (isLoadingCoaches) {
+    return <CoachDetailsSkeleton />;
+  }
 
   if (!coach) {
     notFound();
   }
 
-  const workingDays = isLoading ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
+  const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -51,7 +113,7 @@ export default function CoachDetailsPage() {
               <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
               <div>
                 <p className="font-semibold">Working Days</p>
-                {isLoading ? (
+                {isLoadingHolidays ? (
                   <Skeleton className="h-5 w-12" />
                 ) : (
                   <p className="text-sm text-muted-foreground">{workingDays} days</p>
