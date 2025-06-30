@@ -1,7 +1,7 @@
 
 "use client";
 
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMaterials } from "@/hooks/use-materials";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function MaterialsPage() {
   const { materials, isLoading } = useMaterials();
+  const router = useRouter();
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -26,11 +27,12 @@ export default function MaterialsPage() {
           </p>
         </div>
         <div>
-          <Button asChild className="w-full md:w-auto">
-            <Link href="/add-material">
-              <PackagePlus />
-              Add New Material
-            </Link>
+          <Button 
+            className="w-full md:w-auto"
+            onClick={() => router.push('/add-material')}
+          >
+            <PackagePlus />
+            Add New Material
           </Button>
         </div>
       </div>
