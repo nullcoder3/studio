@@ -8,7 +8,7 @@ export const materials: Material[] = [
   { id: 'mat-005', name: 'Lighting Fixtures', ownership: 'Railway' },
 ];
 
-export const coaches: Coach[] = [
+export let coaches: Coach[] = [
   {
     id: 'coach-001',
     coachNumber: 'C-101',
@@ -52,3 +52,20 @@ export const coaches: Coach[] = [
     materials: [materials[1], materials[3]],
   },
 ];
+
+// This function adds a new coach to our in-memory array.
+// In a real application, this would interact with a proper database.
+export function addCoachData(newCoachData: Omit<Coach, 'id' | 'materials'>) {
+  const newId = `coach-${String(coaches.length + 1).padStart(3, '0')}`;
+  const newCoach: Coach = {
+    id: newId,
+    coachNumber: newCoachData.coachNumber,
+    offeredDate: newCoachData.offeredDate,
+    workTypes: newCoachData.workTypes,
+    notes: newCoachData.notes,
+    materials: [], // New coaches start with no materials
+  };
+  // Add to the start of the array so it appears first on the list
+  coaches.unshift(newCoach);
+  return newCoach;
+}
