@@ -1,6 +1,11 @@
 export interface Material {
   id: string;
   name: string;
+  materialCode: string;
+  unit: string;
+  stockQuantity?: number;
+  minStockLevel?: number;
+  description?: string;
   ownership: 'Railway' | 'SSWPI';
 }
 

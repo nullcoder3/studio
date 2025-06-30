@@ -1,11 +1,11 @@
 import type { Coach, Material } from './types';
 
 export const initialMaterials: Material[] = [
-  { id: 'mat-001', name: 'Brake Pads', ownership: 'Railway' },
-  { id: 'mat-002', name: 'Seat Covers', ownership: 'SSWPI' },
-  { id: 'mat-003', name: 'Window Panes', ownership: 'Railway' },
-  { id: 'mat-004', name: 'Flooring Material', ownership: 'SSWPI' },
-  { id: 'mat-005', name: 'Lighting Fixtures', ownership: 'Railway' },
+  { id: 'mat-001', name: 'Brake Pads', materialCode: 'BP001', unit: 'set', stockQuantity: 100, minStockLevel: 20, description: 'Standard issue brake pads.', ownership: 'Railway' },
+  { id: 'mat-002', name: 'Seat Covers', materialCode: 'SC001', unit: 'piece', stockQuantity: 200, minStockLevel: 50, description: 'Fabric seat covers.', ownership: 'SSWPI' },
+  { id: 'mat-003', name: 'Window Panes', materialCode: 'WP001', unit: 'piece', stockQuantity: 50, minStockLevel: 10, description: 'Double-glazed window panes.', ownership: 'Railway' },
+  { id: 'mat-004', name: 'Flooring Material', materialCode: 'FM001', unit: 'sqm', stockQuantity: 150, minStockLevel: 30, description: 'Anti-skid flooring.', ownership: 'SSWPI' },
+  { id: 'mat-005', name: 'Lighting Fixtures', materialCode: 'LF001', unit: 'piece', stockQuantity: 300, minStockLevel: 50, description: 'LED lighting fixtures.', ownership: 'Railway' },
 ];
 
 export const initialCoaches: Coach[] = [
