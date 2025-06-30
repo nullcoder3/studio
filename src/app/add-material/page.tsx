@@ -63,7 +63,7 @@ export default function AddMaterialPage() {
       title: "Material Added",
       description: `Material "${values.materialName}" has been successfully registered.`,
     });
-    router.push('/'); 
+    router.push('/materials'); 
   }
 
   return (

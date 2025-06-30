@@ -5,7 +5,7 @@ import { useCoaches } from '@/hooks/use-coaches';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { PackagePlus } from 'lucide-react';
+import { HardHat } from 'lucide-react';
 
 export default function Home() {
   const { coaches, isLoading } = useCoaches();
@@ -21,9 +21,9 @@ export default function Home() {
         </div>
         <div>
           <Button asChild className="w-full md:w-auto">
-            <Link href="/add-material">
-              <PackagePlus />
-              Add Material
+            <Link href="/materials">
+              <HardHat />
+              Manage Materials
             </Link>
           </Button>
         </div>
