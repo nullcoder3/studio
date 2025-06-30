@@ -1,5 +1,8 @@
+"use client";
+
+import * as React from 'react';
 import Link from 'next/link';
-import { Menu, Settings, TrainTrack } from 'lucide-react';
+import { Menu, Settings, TrainTrack, PackagePlus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -12,6 +15,12 @@ import {
 } from '@/components/ui/sheet';
 
 export function Header() {
+  const [isSheetOpen, setIsSheetOpen] = React.useState(false);
+
+  const handleLinkClick = () => {
+    setIsSheetOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
@@ -34,7 +43,7 @@ export function Header() {
 
         {/* Mobile Navigation */}
         <div className="flex flex-1 justify-end md:hidden">
-          <Sheet>
+          <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
                 <Menu className="h-5 w-5" />
@@ -44,7 +53,7 @@ export function Header() {
             <SheetContent side="right">
               <SheetHeader className="text-left">
                 <SheetTitle>
-                  <Link href="/" className="flex items-center space-x-2">
+                  <Link href="/" onClick={handleLinkClick} className="flex items-center space-x-2">
                     <TrainTrack className="h-6 w-6 text-primary" />
                     <span className="font-bold">CoachTrack</span>
                   </Link>
@@ -55,7 +64,16 @@ export function Header() {
               </SheetHeader>
               <nav className="grid gap-4 py-6">
                 <Link
+                  href="/add-material"
+                  onClick={handleLinkClick}
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                >
+                  <PackagePlus className="h-5 w-5" />
+                  Add Material
+                </Link>
+                <Link
                   href="/settings"
+                  onClick={handleLinkClick}
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
                 >
                   <Settings className="h-5 w-5" />
