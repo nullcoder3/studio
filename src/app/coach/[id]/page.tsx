@@ -1,0 +1,102 @@
+"use client";
+
+import { notFound } from 'next/navigation';
+import { coaches } from '@/lib/data';
+import { useHolidays } from '@/hooks/use-holidays';
+import { calculateWorkingDays } from '@/lib/date-utils';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Badge } from '@/components/ui/badge';
+import { Calendar, Clock } from 'lucide-react';
+import { format } from 'date-fns';
+
+export default function CoachDetailsPage({ params }: { params: { id: string } }) {
+  const coach = coaches.find((c) => c.id === params.id);
+  const { holidays, isLoading } = useHolidays();
+
+  if (!coach) {
+    notFound();
+  }
+
+  const workingDays = isLoading ? -1 : calculateWorkingDays(coach.dateOffered, holidays);
+
+  return (
+    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">
+          Coach {coach.coachNumber}
+        </h1>
+        <p className="mt-2 text-lg text-muted-foreground">
+          Detailed information and material usage for the coach.
+        </p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="md:col-span-1">
+          <CardHeader>
+            <CardTitle>Details</CardTitle>
+            <CardDescription>{coach.workType}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center">
+              <Calendar className="h-5 w-5 mr-3 text-muted-foreground" />
+              <div>
+                <p className="font-semibold">Date Offered</p>
+                <p className="text-sm text-muted-foreground">{format(coach.dateOffered, 'PPP')}</p>
+              </div>
+            </div>
+             <div className="flex items-center">
+              <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
+              <div>
+                <p className="font-semibold">Working Days</p>
+                {isLoading ? (
+                  <Skeleton className="h-5 w-12" />
+                ) : (
+                  <p className="text-sm text-muted-foreground">{workingDays} days</p>
+                )}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Materials Used</CardTitle>
+            <CardDescription>List of materials with ownership details.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Material</TableHead>
+                  <TableHead>Ownership</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {coach.materials.length > 0 ? coach.materials.map((material) => (
+                  <TableRow key={material.id}>
+                    <TableCell className="font-medium">{material.name}</TableCell>
+                    <TableCell>
+                      {material.ownership === 'Railway' ? (
+                         <Badge variant="secondary">Railway (R)</Badge>
+                      ) : (
+                        <Badge variant="outline">SSWPI (S)</Badge>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                )) : (
+                  <TableRow>
+                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                      No materials listed for this coach.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
