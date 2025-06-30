@@ -1,6 +1,8 @@
 import Link from 'next/link';
-import { TrainTrack, Plus, Wrench, Settings } from 'lucide-react';
+import { Menu, Plus, Settings, TrainTrack, Wrench } from 'lucide-react';
+
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 export function Header() {
   return (
@@ -12,8 +14,10 @@ export function Header() {
             <span className="font-bold font-headline">CoachTrack</span>
           </Link>
         </div>
-        <nav className="flex flex-1 items-center space-x-1 justify-end">
-          <Button variant="ghost" asChild>
+        
+        {/* Desktop Navigation */}
+        <nav className="hidden flex-1 items-center space-x-1 justify-end md:flex">
+           <Button variant="ghost" asChild>
             <Link href="/add-coach">
               <Plus className="mr-2 h-4 w-4" />
               Add Coach
@@ -32,6 +36,38 @@ export function Header() {
             </Link>
           </Button>
         </nav>
+
+        {/* Mobile Navigation */}
+        <div className="flex flex-1 justify-end md:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right">
+              <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
+                <TrainTrack className="h-6 w-6 text-primary" />
+                <span className="font-bold">CoachTrack</span>
+              </Link>
+              <nav className="grid gap-4">
+                <Link href="/add-coach" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                  <Plus className="h-5 w-5" />
+                  Add Coach
+                </Link>
+                <Link href="/add-material" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                  <Wrench className="h-5 w-5" />
+                  Add Material
+                </Link>
+                <Link href="/settings" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                  <Settings className="h-5 w-5" />
+                  Settings
+                </Link>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );
