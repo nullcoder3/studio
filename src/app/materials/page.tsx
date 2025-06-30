@@ -2,6 +2,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Link from 'next/link';
 import { useMaterials } from "@/hooks/use-materials";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -27,12 +28,11 @@ export default function MaterialsPage() {
           </p>
         </div>
         <div>
-          <Button 
-            className="w-full md:w-auto"
-            onClick={() => router.push('/add-material')}
-          >
-            <PackagePlus />
-            Add New Material
+          <Button asChild className="w-full md:w-auto">
+            <Link href="/add-material">
+              <PackagePlus />
+              Add New Material
+            </Link>
           </Button>
         </div>
       </div>
