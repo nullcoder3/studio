@@ -1,27 +1,25 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { isSameDay, parseISO } from 'date-fns';
 
 const HOLIDAYS_STORAGE_KEY = 'coachTrackHolidays';
 
 export function useHolidays() {
-  const [holidays, setHolidays] = useState<Date[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [holidays, setHolidays] = useState<Date[] | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
     try {
       const item = window.localStorage.getItem(HOLIDAYS_STORAGE_KEY);
       if (item) {
         const parsedHolidays = JSON.parse(item).map((dateStr: string) => parseISO(dateStr));
         setHolidays(parsedHolidays);
+      } else {
+        setHolidays([]);
       }
     } catch (error) {
       console.error("Failed to parse holidays from localStorage", error);
       setHolidays([]);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -34,24 +32,28 @@ export function useHolidays() {
      }
   }
 
-  const addHoliday = useCallback((date: Date) => {
+  const addHoliday = (date: Date) => {
     setHolidays(prevHolidays => {
-      if (!prevHolidays.some(h => isSameDay(h, date))) {
-        const newHolidays = [...prevHolidays, date].sort((a,b) => a.getTime() - b.getTime());
+      const currentHolidays = prevHolidays ?? [];
+      if (!currentHolidays.some(h => isSameDay(h, date))) {
+        const newHolidays = [...currentHolidays, date].sort((a,b) => a.getTime() - b.getTime());
         updateLocalStorage(newHolidays);
         return newHolidays;
       }
-      return prevHolidays;
+      return currentHolidays;
     });
-  }, []);
+  };
 
-  const removeHoliday = useCallback((date: Date) => {
+  const removeHoliday = (date: Date) => {
     setHolidays(prevHolidays => {
-        const newHolidays = prevHolidays.filter(h => !isSameDay(h, date));
+        const currentHolidays = prevHolidays ?? [];
+        const newHolidays = currentHolidays.filter(h => !isSameDay(h, date));
         updateLocalStorage(newHolidays);
         return newHolidays;
     });
-  }, []);
+  };
 
-  return { holidays, addHoliday, removeHoliday, isLoading };
+  const isLoading = holidays === null;
+
+  return { holidays: holidays ?? [], addHoliday, removeHoliday, isLoading };
 }

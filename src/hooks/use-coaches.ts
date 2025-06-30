@@ -16,11 +16,9 @@ const coachReviver = (key: string, value: any) => {
 };
 
 export function useCoaches() {
-  const [coaches, setCoaches] = useState<Coach[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [coaches, setCoaches] = useState<Coach[] | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
     try {
       const item = window.localStorage.getItem(COACHES_STORAGE_KEY);
       if (item) {
@@ -33,8 +31,6 @@ export function useCoaches() {
     } catch (error) {
       console.error("Failed to parse coaches from localStorage", error);
       setCoaches(initialCoaches);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -48,6 +44,7 @@ export function useCoaches() {
 
   const addCoach = (newCoachData: Omit<Coach, 'id' | 'materials'>) => {
     setCoaches(prevCoaches => {
+        const currentCoaches = prevCoaches ?? [];
         const newCoach: Coach = {
             id: `coach-${crypto.randomUUID()}`,
             coachNumber: newCoachData.coachNumber,
@@ -56,11 +53,13 @@ export function useCoaches() {
             notes: newCoachData.notes,
             materials: [],
         };
-        const newCoaches = [newCoach, ...prevCoaches];
+        const newCoaches = [newCoach, ...currentCoaches];
         updateLocalStorage(newCoaches);
         return newCoaches;
     });
   };
 
-  return { coaches, addCoach, isLoading };
+  const isLoading = coaches === null;
+
+  return { coaches: coaches ?? [], addCoach, isLoading };
 }

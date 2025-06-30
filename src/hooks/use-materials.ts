@@ -7,11 +7,9 @@ import { initialMaterials } from '@/lib/data';
 const MATERIALS_STORAGE_KEY = 'coachTrackMaterials';
 
 export function useMaterials() {
-  const [materials, setMaterials] = useState<Material[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [materials, setMaterials] = useState<Material[] | null>(null);
 
   useEffect(() => {
-    setIsLoading(true);
     try {
       const item = window.localStorage.getItem(MATERIALS_STORAGE_KEY);
       if (item) {
@@ -23,8 +21,6 @@ export function useMaterials() {
     } catch (error) {
       console.error("Failed to parse materials from localStorage", error);
       setMaterials(initialMaterials);
-    } finally {
-      setIsLoading(false);
     }
   }, []);
 
@@ -38,15 +34,18 @@ export function useMaterials() {
 
   const addMaterial = (newMaterialData: Omit<Material, 'id'>) => {
     setMaterials(prevMaterials => {
+        const currentMaterials = prevMaterials ?? [];
         const newMaterial: Material = {
             id: `mat-${crypto.randomUUID()}`,
             ...newMaterialData,
         };
-        const newMaterials = [newMaterial, ...prevMaterials];
+        const newMaterials = [newMaterial, ...currentMaterials];
         updateLocalStorage(newMaterials);
         return newMaterials;
     });
   };
 
-  return { materials, addMaterial, isLoading };
+  const isLoading = materials === null;
+
+  return { materials: materials ?? [], addMaterial, isLoading };
 }
