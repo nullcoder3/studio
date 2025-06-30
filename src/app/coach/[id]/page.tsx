@@ -69,15 +69,16 @@ function CoachDetailsSkeleton() {
 
 export default function CoachDetailsPage() {
   const params = useParams();
-  const coachId = typeof params.id === 'string' ? params.id : '';
   const { coaches, isLoading: isLoadingCoaches } = useCoaches();
   const { holidays, isLoading: isLoadingHolidays } = useHolidays();
 
-  const coach = coaches.find((c) => c.id === coachId);
-
-  if (isLoadingCoaches) {
+  // Wait for both params and coaches to be loaded
+  if (isLoadingCoaches || !params.id) {
     return <CoachDetailsSkeleton />;
   }
+
+  const coachId = params.id as string;
+  const coach = coaches.find((c) => c.id === coachId);
 
   if (!coach) {
     notFound();

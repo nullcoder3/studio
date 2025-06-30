@@ -28,19 +28,19 @@ export default function Home() {
             </div>
           ))
         ) : coaches.map((coach, index) => (
-          <Link href={`/coach/${coach.id}`} key={coach.id} className="group">
-            <div
-              className="animate-fade-in-up"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <Card className="h-40 flex items-center justify-center transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary/50 hover:-translate-y-1">
-                <CardContent className="p-0">
-                  <span className="text-4xl font-extrabold tracking-wider text-foreground group-hover:text-primary transition-colors">
-                    {coach.coachNumber}
-                  </span>
-                </CardContent>
-              </Card>
-            </div>
+          <Link
+            href={`/coach/${coach.id}`}
+            key={coach.id}
+            className="group block animate-fade-in-up"
+            style={{ animationDelay: `${index * 100}ms` }}
+          >
+            <Card className="h-40 flex items-center justify-center transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary/50 hover:-translate-y-1">
+              <CardContent className="p-0">
+                <span className="text-4xl font-extrabold tracking-wider text-foreground group-hover:text-primary transition-colors">
+                  {coach.coachNumber}
+                </span>
+              </CardContent>
+            </Card>
           </Link>
         ))}
       </div>
