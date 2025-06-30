@@ -2,7 +2,14 @@ import Link from 'next/link';
 import { Menu, Plus, Settings, TrainTrack, Wrench } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
 
 export function Header() {
   return (
@@ -47,20 +54,36 @@ export function Header() {
               </Button>
             </SheetTrigger>
             <SheetContent side="right">
-              <Link href="/" className="mr-6 flex items-center space-x-2 mb-6">
-                <TrainTrack className="h-6 w-6 text-primary" />
-                <span className="font-bold">CoachTrack</span>
-              </Link>
-              <nav className="grid gap-4">
-                <Link href="/add-coach" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+              <SheetHeader className="text-left">
+                <SheetTitle>
+                  <Link href="/" className="flex items-center space-x-2">
+                    <TrainTrack className="h-6 w-6 text-primary" />
+                    <span className="font-bold">CoachTrack</span>
+                  </Link>
+                </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Main navigation menu.
+                </SheetDescription>
+              </SheetHeader>
+              <nav className="grid gap-4 py-6">
+                <Link
+                  href="/add-coach"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                >
                   <Plus className="h-5 w-5" />
                   Add Coach
                 </Link>
-                <Link href="/add-material" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                <Link
+                  href="/add-material"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                >
                   <Wrench className="h-5 w-5" />
                   Add Material
                 </Link>
-                <Link href="/settings" className="flex items-center gap-2 text-muted-foreground hover:text-foreground">
+                <Link
+                  href="/settings"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
+                >
                   <Settings className="h-5 w-5" />
                   Settings
                 </Link>
