@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, Settings, TrainTrack, HardHat, PackagePlus } from 'lucide-react';
+import { Menu, Settings, TrainTrack, HardHat } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -37,12 +37,6 @@ export function Header() {
             <Link href="/materials">
               <HardHat className="h-5 w-5" />
               <span className="sr-only">Materials</span>
-            </Link>
-          </Button>
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/add-material">
-              <PackagePlus className="h-5 w-5" />
-              <span className="sr-only">Add Material</span>
             </Link>
           </Button>
           <Button variant="ghost" size="icon" asChild>
@@ -82,14 +76,6 @@ export function Header() {
                 >
                   <HardHat className="h-5 w-5" />
                   Manage Materials
-                </Link>
-                <Link
-                  href="/add-material"
-                  onClick={handleLinkClick}
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  <PackagePlus className="h-5 w-5" />
-                  Add New Material
                 </Link>
                 <Link
                   href="/settings"
