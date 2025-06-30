@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { initialCoaches } from '@/lib/data';
 import type { Coach } from '@/lib/types';
 import { parseISO } from 'date-fns';
@@ -46,7 +46,7 @@ export function useCoaches() {
      }
   }
 
-  const addCoach = useCallback((newCoachData: Omit<Coach, 'id' | 'materials'>) => {
+  const addCoach = (newCoachData: Omit<Coach, 'id' | 'materials'>) => {
     setCoaches(prevCoaches => {
         const newCoach: Coach = {
             id: `coach-${crypto.randomUUID()}`,
@@ -60,7 +60,7 @@ export function useCoaches() {
         updateLocalStorage(newCoaches);
         return newCoaches;
     });
-  }, []);
+  };
 
   return { coaches, addCoach, isLoading };
 }

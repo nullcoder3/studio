@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import type { Material } from '@/lib/types';
 import { initialMaterials } from '@/lib/data';
 
@@ -36,7 +36,7 @@ export function useMaterials() {
      }
   }
 
-  const addMaterial = useCallback((newMaterialData: Omit<Material, 'id'>) => {
+  const addMaterial = (newMaterialData: Omit<Material, 'id'>) => {
     setMaterials(prevMaterials => {
         const newMaterial: Material = {
             id: `mat-${crypto.randomUUID()}`,
@@ -46,7 +46,7 @@ export function useMaterials() {
         updateLocalStorage(newMaterials);
         return newMaterials;
     });
-  }, []);
+  };
 
   return { materials, addMaterial, isLoading };
 }
