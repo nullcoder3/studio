@@ -5,7 +5,7 @@ import { useCoaches } from '@/hooks/use-coaches';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Button } from '@/components/ui/button';
-import { HardHat } from 'lucide-react';
+import { HardHat, PackagePlus } from 'lucide-react';
 
 export default function Home() {
   const { coaches, isLoading } = useCoaches();
@@ -19,12 +19,18 @@ export default function Home() {
             A list of all coaches currently in service or under maintenance.
           </p>
         </div>
-        <div>
+        <div className="flex flex-col sm:flex-row gap-4">
           <Button asChild className="w-full md:w-auto">
             <Link href="/materials">
               <HardHat />
               Manage Materials
             </Link>
+          </Button>
+          <Button asChild className="w-full md:w-auto">
+             <Link href="/add-material">
+               <PackagePlus />
+               Add New Material
+             </Link>
           </Button>
         </div>
       </div>
