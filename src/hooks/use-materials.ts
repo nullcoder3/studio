@@ -38,9 +38,8 @@ export function useMaterials() {
 
   const addMaterial = useCallback((newMaterialData: Omit<Material, 'id'>) => {
     setMaterials(prevMaterials => {
-        const newId = `mat-${String(prevMaterials.length + 1).padStart(3, '0')}`;
         const newMaterial: Material = {
-            id: newId,
+            id: `mat-${crypto.randomUUID()}`,
             ...newMaterialData,
         };
         const newMaterials = [newMaterial, ...prevMaterials];

@@ -56,7 +56,6 @@ export default function AddMaterialPage() {
         description: values.description,
     });
     
-    await new Promise(resolve => setTimeout(resolve, 500));
     setIsSubmitting(false);
 
     toast({
@@ -128,7 +127,7 @@ export default function AddMaterialPage() {
                     <FormItem>
                       <FormLabel>Stock Quantity</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Current stock" {...field} />
+                        <Input type="number" placeholder="Current stock" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -141,7 +140,7 @@ export default function AddMaterialPage() {
                     <FormItem>
                       <FormLabel>Minimum Stock Level</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Minimum stock alert level" {...field} />
+                        <Input type="number" placeholder="Minimum stock alert level" {...field} value={field.value ?? ''} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

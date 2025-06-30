@@ -39,9 +39,6 @@ export default function AddCoachPage() {
   async function onSubmit(values: z.infer<typeof addCoachSchema>) {
     setIsSubmitting(true);
     
-    // Simulate async operation for better UX
-    await new Promise(resolve => setTimeout(resolve, 500));
-
     addCoach({
       coachNumber: values.coachNumber,
       offeredDate: values.offeredDate,

@@ -48,9 +48,8 @@ export function useCoaches() {
 
   const addCoach = useCallback((newCoachData: Omit<Coach, 'id' | 'materials'>) => {
     setCoaches(prevCoaches => {
-        const newId = `coach-${String(prevCoaches.length + 1).padStart(3, '0')}`;
         const newCoach: Coach = {
-            id: newId,
+            id: `coach-${crypto.randomUUID()}`,
             coachNumber: newCoachData.coachNumber,
             offeredDate: newCoachData.offeredDate,
             workTypes: newCoachData.workTypes,
