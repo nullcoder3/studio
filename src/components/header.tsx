@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Menu, Plus, Settings, TrainTrack, Wrench } from 'lucide-react';
+import { Menu, Settings, TrainTrack, Wrench } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,12 +25,6 @@ export function Header() {
         {/* Desktop Navigation */}
         <nav className="hidden flex-1 items-center space-x-1 justify-end md:flex">
            <Button variant="ghost" asChild>
-            <Link href="/add-coach">
-              <Plus className="mr-2 h-4 w-4" />
-              Add Coach
-            </Link>
-          </Button>
-          <Button variant="ghost" asChild>
             <Link href="/add-material">
               <Wrench className="mr-2 h-4 w-4" />
               Add Material
@@ -66,13 +60,6 @@ export function Header() {
                 </SheetDescription>
               </SheetHeader>
               <nav className="grid gap-4 py-6">
-                <Link
-                  href="/add-coach"
-                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
-                >
-                  <Plus className="h-5 w-5" />
-                  Add Coach
-                </Link>
                 <Link
                   href="/add-material"
                   className="flex items-center gap-2 text-muted-foreground hover:text-foreground"
