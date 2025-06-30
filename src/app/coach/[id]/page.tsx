@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock } from 'lucide-react';
+import { Calendar, Clock, Wrench } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function CoachDetailsPage({ params }: { params: { id: string } }) {
@@ -19,7 +19,7 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
     notFound();
   }
 
-  const workingDays = isLoading ? -1 : calculateWorkingDays(coach.dateOffered, holidays);
+  const workingDays = isLoading ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
 
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
@@ -36,14 +36,13 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
         <Card className="md:col-span-1">
           <CardHeader>
             <CardTitle>Details</CardTitle>
-            <CardDescription>{coach.workType}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center">
               <Calendar className="h-5 w-5 mr-3 text-muted-foreground" />
               <div>
                 <p className="font-semibold">Date Offered</p>
-                <p className="text-sm text-muted-foreground">{format(coach.dateOffered, 'PPP')}</p>
+                <p className="text-sm text-muted-foreground">{format(coach.offeredDate, 'PPP')}</p>
               </div>
             </div>
              <div className="flex items-center">
@@ -55,6 +54,19 @@ export default function CoachDetailsPage({ params }: { params: { id: string } })
                 ) : (
                   <p className="text-sm text-muted-foreground">{workingDays} days</p>
                 )}
+              </div>
+            </div>
+            <div className="flex items-start pt-2">
+              <Wrench className="h-5 w-5 mr-3 text-muted-foreground flex-shrink-0 mt-1" />
+              <div>
+                <p className="font-semibold">Work Types</p>
+                <div className="flex flex-wrap gap-1 mt-1">
+                  {coach.workTypes.map((workType) => (
+                    <Badge key={workType} variant="secondary" className="font-normal">
+                      {workType}
+                    </Badge>
+                  ))}
+                </div>
               </div>
             </div>
           </CardContent>

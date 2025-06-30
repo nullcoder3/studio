@@ -7,7 +7,8 @@ export interface Material {
 export interface Coach {
   id: string;
   coachNumber: string;
-  dateOffered: Date;
-  workType: string;
+  offeredDate: Date;
+  workTypes: string[];
+  notes?: string;
   materials: Material[];
 }
