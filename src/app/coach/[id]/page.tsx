@@ -1,8 +1,10 @@
+
 "use client";
 
 import { notFound, useParams } from 'next/navigation';
 import { useCoaches } from '@/hooks/use-coaches';
 import { useHolidays } from '@/hooks/use-holidays';
+import { useMaterials } from '@/hooks/use-materials';
 import { calculateWorkingDays } from '@/lib/date-utils';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -71,9 +73,10 @@ export default function CoachDetailsPage() {
   const params = useParams();
   const { coaches, isLoading: isLoadingCoaches } = useCoaches();
   const { holidays, isLoading: isLoadingHolidays } = useHolidays();
+  const { materials: allMaterials, isLoading: isLoadingMaterials } = useMaterials();
 
-  // Wait for both params and coaches to be loaded
-  if (isLoadingCoaches || !params.id) {
+
+  if (isLoadingCoaches || !params.id || isLoadingMaterials) {
     return <CoachDetailsSkeleton />;
   }
 
@@ -140,31 +143,39 @@ export default function CoachDetailsPage() {
         <Card className="md:col-span-2">
           <CardHeader>
             <CardTitle>Materials Used</CardTitle>
-            <CardDescription>List of materials with ownership details.</CardDescription>
+            <CardDescription>List of materials consumed by this coach.</CardDescription>
           </CardHeader>
           <CardContent>
             <Table>
               <TableHeader>
                 <TableRow>
                   <TableHead>Material</TableHead>
+                  <TableHead>Quantity</TableHead>
+                  <TableHead>Date</TableHead>
                   <TableHead>Ownership</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {coach.materials.length > 0 ? coach.materials.map((material) => (
-                  <TableRow key={material.id}>
-                    <TableCell className="font-medium">{material.name}</TableCell>
-                    <TableCell>
-                      {material.ownership === 'Railway' ? (
-                         <Badge variant="secondary">Railway (R)</Badge>
-                      ) : (
-                        <Badge variant="outline">SSWPI (S)</Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                )) : (
+                {coach.materials.length > 0 ? coach.materials.map((usedMaterial) => {
+                  const materialDetails = allMaterials.find(m => m.id === usedMaterial.materialId);
+                   if (!materialDetails) return null;
+                   return (
+                      <TableRow key={`${usedMaterial.materialId}-${usedMaterial.date.toISOString()}`}>
+                        <TableCell className="font-medium">{materialDetails.name}</TableCell>
+                        <TableCell>{usedMaterial.quantity} {materialDetails.unit}</TableCell>
+                        <TableCell>{format(usedMaterial.date, 'PPP')}</TableCell>
+                        <TableCell>
+                          {materialDetails.ownership === 'Railway' ? (
+                             <Badge variant="secondary">Railway (R)</Badge>
+                          ) : (
+                            <Badge variant="outline">SSWPI (S)</Badge>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                   )
+                }) : (
                   <TableRow>
-                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                    <TableCell colSpan={4} className="text-center text-muted-foreground">
                       No materials listed for this coach.
                     </TableCell>
                   </TableRow>

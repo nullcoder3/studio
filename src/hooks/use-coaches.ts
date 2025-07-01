@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { initialCoaches } from '@/lib/data';
 import type { Coach } from '@/lib/types';
 import { parseISO } from 'date-fns';
@@ -9,7 +10,7 @@ const COACHES_STORAGE_KEY = 'coachTrackCoaches';
 
 // Helper to parse dates from stringified JSON
 const coachReviver = (key: string, value: any) => {
-  if (key === 'offeredDate' && typeof value === 'string') {
+  if ((key === 'offeredDate' || key === 'date') && typeof value === 'string') {
     return parseISO(value);
   }
   return value;
@@ -59,7 +60,22 @@ export function useCoaches() {
     });
   };
 
+  const updateCoach = (updatedCoach: Coach) => {
+    setCoaches(prevCoaches => {
+        const currentCoaches = prevCoaches ?? [];
+        const coachIndex = currentCoaches.findIndex(c => c.id === updatedCoach.id);
+        if (coachIndex === -1) {
+            console.error("Coach not found for update");
+            return currentCoaches;
+        }
+        const newCoaches = [...currentCoaches];
+        newCoaches[coachIndex] = updatedCoach;
+        updateLocalStorage(newCoaches);
+        return newCoaches;
+    });
+  };
+
   const isLoading = coaches === null;
 
-  return { coaches: coaches ?? [], addCoach, isLoading };
+  return { coaches: coaches ?? [], addCoach, updateCoach, isLoading };
 }

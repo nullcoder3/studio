@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -10,8 +11,13 @@ import { CoachDetails } from '@/components/coach-details';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function Home() {
-  const { coaches, isLoading } = useCoaches();
+  const { coaches, isLoading, updateCoach } = useCoaches();
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+
+  const handleUpdateCoach = (updatedCoach: Coach) => {
+    updateCoach(updatedCoach);
+    setSelectedCoach(updatedCoach);
+  };
 
   return (
     <>
@@ -67,7 +73,7 @@ export default function Home() {
           <ScrollArea className="flex-1">
             <div className="p-6 pt-0">
               {selectedCoach ? (
-                <CoachDetails coach={selectedCoach} />
+                <CoachDetails coach={selectedCoach} onUpdate={handleUpdateCoach} />
               ) : (
                  <p className="text-center text-muted-foreground">No coach selected.</p>
               )}
