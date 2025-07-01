@@ -25,7 +25,11 @@ const generateYearOptions = (coaches: Coach[]) => {
   if (!coaches || coaches.length === 0) {
     return [getYear(new Date())];
   }
-  const years = new Set(coaches.map(c => getYear(c.offeredDate)));
+  const years = new Set(coaches.flatMap(c => {
+    const dates = [c.offeredDate];
+    if (c.completionDate) dates.push(c.completionDate);
+    return dates.map(d => getYear(d));
+  }));
   const currentYear = getYear(new Date());
   if (!years.has(currentYear)) {
     years.add(currentYear);
@@ -48,15 +52,20 @@ export default function ReportsPage() {
   }, [yearOptions, selectedYear]);
 
   const monthlyReport = React.useMemo(() => {
-    if (isLoading) return [];
+    if (isLoading || !coaches) return [];
     
     const workTypeCounts = new Map<string, number>();
 
     coaches
-      .filter(coach => 
-        getYear(coach.offeredDate) === selectedYear &&
-        coach.offeredDate.getMonth() === selectedMonth
-      )
+      .filter(coach => {
+        // Use completionDate for completed coaches, offeredDate for active ones
+        const dateToCompare = coach.status === 'completed' && coach.completionDate 
+          ? coach.completionDate 
+          : coach.offeredDate;
+        
+        return getYear(dateToCompare) === selectedYear &&
+               dateToCompare.getMonth() === selectedMonth;
+      })
       .forEach(coach => {
         coach.workTypes.forEach(workType => {
           workTypeCounts.set(workType, (workTypeCounts.get(workType) || 0) + 1);
@@ -121,7 +130,7 @@ export default function ReportsPage() {
             Report for {format(new Date(selectedYear, selectedMonth), 'MMMM yyyy')}
           </CardTitle>
           <CardDescription>
-            Total counts for each work type initiated in the selected month.
+            Total counts of work types for coaches that entered or completed service in the selected month.
           </CardDescription>
         </CardHeader>
         <CardContent>

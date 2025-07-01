@@ -17,7 +17,7 @@ export interface UsedMaterial {
 }
 
 export interface Coach {
-  id: string;
+  id:string;
   coachNumber: string;
   offeredDate: Date;
   workTypes: string[];
@@ -25,4 +25,9 @@ export interface Coach {
   materials: UsedMaterial[];
   status: 'active' | 'completed';
   completionDate?: Date;
+}
+
+export interface Holiday {
+  id: string;
+  date: Date;
 }

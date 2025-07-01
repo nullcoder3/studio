@@ -1,48 +1,28 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
 import type { Material } from '@/lib/types';
-import { initialMaterials } from '@/lib/data';
-
-const MATERIALS_STORAGE_KEY = 'coachTrackMaterials';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, addDoc } from 'firebase/firestore';
 
 export function useMaterials() {
   const [materials, setMaterials] = useState<Material[] | null>(null);
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(MATERIALS_STORAGE_KEY);
-      if (item) {
-        setMaterials(JSON.parse(item));
-      } else {
-        setMaterials(initialMaterials);
-        window.localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(initialMaterials));
-      }
-    } catch (error) {
-      console.error("Failed to parse materials from localStorage", error);
-      setMaterials(initialMaterials);
-    }
+    const materialsCollection = collection(db, 'materials');
+    const unsubscribe = onSnapshot(materialsCollection, (snapshot) => {
+        const materialsData = snapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        } as Material));
+        setMaterials(materialsData);
+    });
+    return () => unsubscribe();
   }, []);
 
-  const updateLocalStorage = (newMaterials: Material[]) => {
-     try {
-       window.localStorage.setItem(MATERIALS_STORAGE_KEY, JSON.stringify(newMaterials));
-     } catch (error) {
-       console.error("Failed to save materials to localStorage", error);
-     }
-  }
-
-  const addMaterial = (newMaterialData: Omit<Material, 'id'>) => {
-    setMaterials(prevMaterials => {
-        const currentMaterials = prevMaterials ?? [];
-        const newMaterial: Material = {
-            id: `mat-${crypto.randomUUID()}`,
-            ...newMaterialData,
-        };
-        const newMaterials = [newMaterial, ...currentMaterials];
-        updateLocalStorage(newMaterials);
-        return newMaterials;
-    });
+  const addMaterial = async (newMaterialData: Omit<Material, 'id'>) => {
+    await addDoc(collection(db, 'materials'), newMaterialData);
   };
 
   const isLoading = materials === null;

@@ -2,6 +2,7 @@
 "use client";
 
 import { useState } from 'react';
+import type { Holiday } from '@/lib/types';
 import { useHolidays } from '@/hooks/use-holidays';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -69,9 +70,9 @@ export default function SettingsPage() {
                 ) : holidays.length > 0 ? (
                   <ul className="space-y-2">
                     {holidays.map((holiday) => (
-                      <li key={holiday.toISOString()} className="flex justify-between items-center p-2.5 rounded-md bg-muted/50 transition-colors hover:bg-muted">
-                        <span className="font-medium">{format(holiday, 'PPP')}</span>
-                        <Button variant="ghost" size="icon" onClick={() => removeHoliday(holiday)} className="text-muted-foreground hover:text-destructive">
+                      <li key={holiday.id} className="flex justify-between items-center p-2.5 rounded-md bg-muted/50 transition-colors hover:bg-muted">
+                        <span className="font-medium">{format(holiday.date, 'PPP')}</span>
+                        <Button variant="ghost" size="icon" onClick={() => removeHoliday(holiday.id)} className="text-muted-foreground hover:text-destructive">
                           <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Remove holiday</span>
                         </Button>
