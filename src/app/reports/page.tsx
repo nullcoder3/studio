@@ -58,13 +58,11 @@ export default function ReportsPage() {
 
     coaches
       .filter(coach => {
-        // Use completionDate for completed coaches, offeredDate for active ones
-        const dateToCompare = coach.status === 'completed' && coach.completionDate 
-          ? coach.completionDate 
-          : coach.offeredDate;
-        
-        return getYear(dateToCompare) === selectedYear &&
-               dateToCompare.getMonth() === selectedMonth;
+        // Only include coaches that were COMPLETED in the selected month and year.
+        return coach.status === 'completed' &&
+               coach.completionDate &&
+               getYear(coach.completionDate) === selectedYear &&
+               coach.completionDate.getMonth() === selectedMonth;
       })
       .forEach(coach => {
         coach.workTypes.forEach(workType => {
@@ -87,7 +85,7 @@ export default function ReportsPage() {
             Monthly Work Report
           </h1>
           <p className="mt-4 text-lg text-muted-foreground">
-            A summary of work types performed each month.
+            A summary of work types for all coaches completed in a given month.
           </p>
         </div>
         <div className="flex items-center gap-2">
@@ -130,7 +128,7 @@ export default function ReportsPage() {
             Report for {format(new Date(selectedYear, selectedMonth), 'MMMM yyyy')}
           </CardTitle>
           <CardDescription>
-            Total counts of work types for coaches that entered or completed service in the selected month.
+            Total counts of work types for coaches marked as completed in the selected period.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -159,7 +157,7 @@ export default function ReportsPage() {
             <div className="flex flex-col items-center justify-center text-center text-muted-foreground py-20">
               <FileText className="h-16 w-16 mb-4" />
               <h3 className="text-xl font-semibold text-foreground">No Data Available</h3>
-              <p>No work was recorded for the selected period.</p>
+              <p>No completed work was recorded for the selected period.</p>
             </div>
           )}
         </CardContent>
