@@ -9,10 +9,20 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { CoachDetails } from '@/components/coach-details';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Plus, ListChecks, CheckCircle } from 'lucide-react';
+import { format } from 'date-fns';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
 export default function Home() {
-  const { coaches, isLoading, updateCoach, removeCoach } = useCoaches();
+  const { coaches, isLoading, updateCoach, removeCoach, markCoachAsCompleted } = useCoaches();
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
+  const [isCompletedSheetOpen, setIsCompletedSheetOpen] = useState(false);
+
+  const activeCoaches = coaches.filter(c => c.status === 'active');
+  const completedCoaches = coaches.filter(c => c.status === 'completed').sort((a, b) => (b.completionDate?.getTime() ?? 0) - (a.completionDate?.getTime() ?? 0));
 
   const handleUpdateCoach = (updatedCoach: Coach) => {
     updateCoach(updatedCoach);
@@ -21,6 +31,11 @@ export default function Home() {
   
   const handleRemoveCoach = (coachId: string) => {
     removeCoach(coachId);
+    setSelectedCoach(null);
+  };
+
+  const handleMarkCompleted = (coachId: string) => {
+    markCoachAsCompleted(coachId);
     setSelectedCoach(null);
   };
 
@@ -44,7 +59,7 @@ export default function Home() {
                 </Card>
               </div>
             ))
-          ) : coaches.map((coach, index) => (
+          ) : activeCoaches.map((coach, index) => (
             <button
               onClick={() => setSelectedCoach(coach)}
               key={coach.id}
@@ -63,6 +78,7 @@ export default function Home() {
         </div>
       </div>
       
+      {/* Coach Details Sheet */}
       <Sheet open={!!selectedCoach} onOpenChange={(isOpen) => { if (!isOpen) setSelectedCoach(null); }}>
         <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 flex flex-col">
           {selectedCoach && (
@@ -70,15 +86,27 @@ export default function Home() {
               <SheetTitle className="text-4xl font-bold tracking-tight text-primary font-headline">
                 Coach {selectedCoach.coachNumber}
               </SheetTitle>
-              <SheetDescription className="text-lg text-muted-foreground pt-2">
-                Detailed information and material usage for the coach.
+              <SheetDescription className="text-lg text-muted-foreground pt-2 flex items-center gap-2">
+                 {selectedCoach.status === 'completed' ? (
+                  <>
+                    <CheckCircle className="h-5 w-5 text-green-500" />
+                    Completed on {format(selectedCoach.completionDate!, 'PPP')}
+                  </>
+                ) : (
+                  'Detailed information and material usage for the coach.'
+                )}
               </SheetDescription>
             </SheetHeader>
           )}
           <ScrollArea className="flex-1">
             <div className="p-6 pt-0">
               {selectedCoach ? (
-                <CoachDetails coach={selectedCoach} onUpdate={handleUpdateCoach} onRemove={handleRemoveCoach} />
+                <CoachDetails 
+                  coach={selectedCoach} 
+                  onUpdate={handleUpdateCoach} 
+                  onRemove={handleRemoveCoach}
+                  onMarkCompleted={handleMarkCompleted}
+                />
               ) : (
                  <p className="text-center text-muted-foreground">No coach selected.</p>
               )}
@@ -86,6 +114,74 @@ export default function Home() {
           </ScrollArea>
         </SheetContent>
       </Sheet>
+
+      {/* Completed Coaches Sheet */}
+      <Sheet open={isCompletedSheetOpen} onOpenChange={setIsCompletedSheetOpen}>
+        <SheetContent className="w-full sm:max-w-2xl md:max-w-3xl p-0 flex flex-col">
+          <SheetHeader className="p-6">
+            <SheetTitle className="text-4xl font-bold tracking-tight text-primary font-headline">
+              Completed Coaches
+            </SheetTitle>
+            <SheetDescription className="text-lg text-muted-foreground pt-2">
+              A list of all coaches that have completed their service.
+            </SheetDescription>
+          </SheetHeader>
+          <ScrollArea className="flex-1">
+            <div className="p-6 pt-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Coach Number</TableHead>
+                    <TableHead>Date Offered</TableHead>
+                    <TableHead>Date Completed</TableHead>
+                    <TableHead>Status</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {completedCoaches.length > 0 ? (
+                    completedCoaches.map((coach) => (
+                      <TableRow key={coach.id} className="cursor-pointer hover:bg-muted/50" onClick={() => { setIsCompletedSheetOpen(false); setTimeout(() => setSelectedCoach(coach), 150) }}>
+                        <TableCell className="font-medium">{coach.coachNumber}</TableCell>
+                        <TableCell>{format(coach.offeredDate, 'PPP')}</TableCell>
+                        <TableCell>{coach.completionDate ? format(coach.completionDate, 'PPP') : 'N/A'}</TableCell>
+                        <TableCell>
+                          <Badge variant="secondary" className="text-green-500 border-green-500/30">
+                             <CheckCircle className="mr-1 h-3 w-3" /> Completed
+                          </Badge>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center text-muted-foreground py-10">
+                        No completed coaches yet.
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </ScrollArea>
+        </SheetContent>
+      </Sheet>
+
+      {/* FABs */}
+      <Button
+        className="fixed bottom-8 left-8 h-16 w-16 rounded-full shadow-lg z-50 animate-fade-in-up"
+        aria-label="View Completed Coaches"
+        onClick={() => setIsCompletedSheetOpen(true)}
+      >
+        <ListChecks className="h-8 w-8" />
+      </Button>
+      <Button
+        asChild
+        className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg z-50 animate-fade-in-up"
+        aria-label="Add Coach"
+      >
+        <Link href="/add-coach">
+          <Plus className="h-8 w-8" />
+        </Link>
+      </Button>
     </>
   );
 }

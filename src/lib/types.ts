@@ -23,4 +23,6 @@ export interface Coach {
   workTypes: string[];
   notes?: string;
   materials: UsedMaterial[];
+  status: 'active' | 'completed';
+  completionDate?: Date;
 }

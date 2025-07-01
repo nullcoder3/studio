@@ -6,11 +6,11 @@ import type { Coach } from '@/lib/types';
 import { useHolidays } from '@/hooks/use-holidays';
 import { useMaterials } from '@/hooks/use-materials';
 import { calculateWorkingDays } from '@/lib/date-utils';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
-import { Calendar as CalendarIcon, Clock, Wrench, Plus, Trash2, Box } from 'lucide-react';
+import { Calendar as CalendarIcon, Clock, Wrench, Plus, Trash2, Box, CheckCircle } from 'lucide-react';
 import { format, isSameDay } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Input } from './ui/input';
@@ -41,9 +41,10 @@ interface CoachDetailsProps {
   coach: Coach;
   onUpdate: (updatedCoach: Coach) => void;
   onRemove: (coachId: string) => void;
+  onMarkCompleted: (coachId: string) => void;
 }
 
-export function CoachDetails({ coach, onUpdate, onRemove }: CoachDetailsProps) {
+export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: CoachDetailsProps) {
   const { holidays, isLoading: isLoadingHolidays } = useHolidays();
   const { materials: allMaterials, isLoading: isLoadingMaterials } = useMaterials();
   
@@ -104,32 +105,34 @@ export function CoachDetails({ coach, onUpdate, onRemove }: CoachDetailsProps) {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Details</CardTitle>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
-                    <Trash2 className="h-5 w-5" />
-                    <span className="sr-only">Delete Coach</span>
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete coach{' '}
-                      <span className="font-semibold">{coach.coachNumber}</span> and all of its associated data.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={() => onRemove(coach.id)}
-                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                    >
-                      Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              {coach.status === 'active' && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                      <Trash2 className="h-5 w-5" />
+                      <span className="sr-only">Delete Coach</span>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete coach{' '}
+                        <span className="font-semibold">{coach.coachNumber}</span> and all of its associated data.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={() => onRemove(coach.id)}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -165,13 +168,21 @@ export function CoachDetails({ coach, onUpdate, onRemove }: CoachDetailsProps) {
               </div>
             </div>
           </CardContent>
+          {coach.status === 'active' && (
+            <CardFooter>
+              <Button className="w-full" onClick={() => onMarkCompleted(coach.id)}>
+                <CheckCircle className="mr-2 h-4 w-4" />
+                Mark as Completed
+              </Button>
+            </CardFooter>
+          )}
         </Card>
 
         <Card>
           <CardHeader>
              <div className="flex justify-between items-center">
                 <CardTitle className="flex items-center gap-2"><Box /> Materials ({coach.materials.length})</CardTitle>
-                {!showAddForm && (
+                {coach.status === 'active' && !showAddForm && (
                     <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
                         <Plus className="mr-2 h-4 w-4" /> Add Material
                     </Button>

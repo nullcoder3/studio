@@ -1,10 +1,8 @@
+
 import type {Metadata} from 'next';
 import './globals.css';
-import Link from 'next/link';
-import { Plus } from 'lucide-react';
 import { Header } from '@/components/header';
 import { Toaster } from "@/components/ui/toaster";
-import { Button } from '@/components/ui/button';
 
 export const metadata: Metadata = {
   title: 'CoachTrack',
@@ -29,15 +27,6 @@ export default function RootLayout({
           <main className="flex-1">{children}</main>
         </div>
         <Toaster />
-        <Button
-          asChild
-          className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg z-50"
-          aria-label="Add Coach"
-        >
-          <Link href="/add-coach">
-            <Plus className="h-8 w-8" />
-          </Link>
-        </Button>
       </body>
     </html>
   );

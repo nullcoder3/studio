@@ -10,7 +10,7 @@ const COACHES_STORAGE_KEY = 'coachTrackCoaches';
 
 // Helper to parse dates from stringified JSON
 const coachReviver = (key: string, value: any) => {
-  if ((key === 'offeredDate' || key === 'date') && typeof value === 'string') {
+  if ((key === 'offeredDate' || key === 'date' || key === 'completionDate') && typeof value === 'string') {
     return parseISO(value);
   }
   return value;
@@ -43,7 +43,7 @@ export function useCoaches() {
      }
   }
 
-  const addCoach = (newCoachData: Omit<Coach, 'id' | 'materials'>) => {
+  const addCoach = (newCoachData: Omit<Coach, 'id' | 'materials' | 'status' | 'completionDate'>) => {
     setCoaches(prevCoaches => {
         const currentCoaches = prevCoaches ?? [];
         const newCoach: Coach = {
@@ -53,6 +53,7 @@ export function useCoaches() {
             workTypes: newCoachData.workTypes,
             notes: newCoachData.notes,
             materials: [],
+            status: 'active',
         };
         const newCoaches = [newCoach, ...currentCoaches];
         updateLocalStorage(newCoaches);
@@ -84,7 +85,21 @@ export function useCoaches() {
     });
   };
 
+  const markCoachAsCompleted = (coachId: string) => {
+    setCoaches(prevCoaches => {
+      const currentCoaches = prevCoaches ?? [];
+      const newCoaches = currentCoaches.map(coach =>
+        coach.id === coachId
+          ? { ...coach, status: 'completed' as const, completionDate: new Date() }
+          : coach
+      );
+      updateLocalStorage(newCoaches);
+      return newCoaches;
+    });
+  };
+
+
   const isLoading = coaches === null;
 
-  return { coaches: coaches ?? [], addCoach, updateCoach, removeCoach, isLoading };
+  return { coaches: coaches ?? [], addCoach, updateCoach, removeCoach, markCoachAsCompleted, isLoading };
 }

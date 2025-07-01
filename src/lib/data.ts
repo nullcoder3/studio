@@ -20,6 +20,7 @@ export const initialCoaches: Coach[] = [
       { materialId: 'mat-001', quantity: 8, date: new Date('2024-05-10') },
       { materialId: 'mat-002', quantity: 40, date: new Date('2024-05-12') },
     ],
+    status: 'active',
   },
   {
     id: 'coach-002',
@@ -30,6 +31,7 @@ export const initialCoaches: Coach[] = [
       { materialId: 'mat-002', quantity: 60, date: new Date('2024-05-20') },
       { materialId: 'mat-004', quantity: 15, date: new Date('2024-05-22') },
     ],
+    status: 'active',
   },
   {
     id: 'coach-003',
@@ -39,6 +41,7 @@ export const initialCoaches: Coach[] = [
     materials: [
       { materialId: 'mat-005', quantity: 25, date: new Date('2024-06-05') },
     ],
+    status: 'active',
   },
   {
     id: 'coach-004',
@@ -50,6 +53,7 @@ export const initialCoaches: Coach[] = [
         { materialId: 'mat-003', quantity: 4, date: new Date('2024-06-16') },
         { materialId: 'mat-005', quantity: 10, date: new Date('2024-06-18') },
     ],
+    status: 'active',
   },
   {
     id: 'coach-005',
@@ -59,6 +63,7 @@ export const initialCoaches: Coach[] = [
     materials: [
       { materialId: 'mat-001', quantity: 4, date: new Date('2024-06-25') },
     ],
+    status: 'active',
   },
   {
     id: 'coach-006',
@@ -70,5 +75,6 @@ export const initialCoaches: Coach[] = [
         { materialId: 'mat-004', quantity: 10, date: new Date('2024-07-06') },
         { materialId: 'mat-006', quantity: 50, date: new Date('2024-07-08') },
     ],
+    status: 'active',
   },
 ];
