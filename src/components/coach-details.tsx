@@ -24,14 +24,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 
 interface CoachDetailsProps {
   coach: Coach;
   onUpdate: (updatedCoach: Coach) => void;
+  onRemove: (coachId: string) => void;
 }
 
-export function CoachDetails({ coach, onUpdate }: CoachDetailsProps) {
+export function CoachDetails({ coach, onUpdate, onRemove }: CoachDetailsProps) {
   const { holidays, isLoading: isLoadingHolidays } = useHolidays();
   const { materials: allMaterials, isLoading: isLoadingMaterials } = useMaterials();
   
@@ -90,7 +102,35 @@ export function CoachDetails({ coach, onUpdate }: CoachDetailsProps) {
     <div className="space-y-6 pt-4">
         <Card>
           <CardHeader>
-            <CardTitle>Details</CardTitle>
+            <div className="flex justify-between items-center">
+              <CardTitle>Details</CardTitle>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                    <Trash2 className="h-5 w-5" />
+                    <span className="sr-only">Delete Coach</span>
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete coach{' '}
+                      <span className="font-semibold">{coach.coachNumber}</span> and all of its associated data.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => onRemove(coach.id)}
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                    >
+                      Delete
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center">

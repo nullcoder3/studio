@@ -75,7 +75,16 @@ export function useCoaches() {
     });
   };
 
+  const removeCoach = (coachId: string) => {
+    setCoaches(prevCoaches => {
+      const currentCoaches = prevCoaches ?? [];
+      const newCoaches = currentCoaches.filter(c => c.id !== coachId);
+      updateLocalStorage(newCoaches);
+      return newCoaches;
+    });
+  };
+
   const isLoading = coaches === null;
 
-  return { coaches: coaches ?? [], addCoach, updateCoach, isLoading };
+  return { coaches: coaches ?? [], addCoach, updateCoach, removeCoach, isLoading };
 }

@@ -11,12 +11,17 @@ import { CoachDetails } from '@/components/coach-details';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 export default function Home() {
-  const { coaches, isLoading, updateCoach } = useCoaches();
+  const { coaches, isLoading, updateCoach, removeCoach } = useCoaches();
   const [selectedCoach, setSelectedCoach] = useState<Coach | null>(null);
 
   const handleUpdateCoach = (updatedCoach: Coach) => {
     updateCoach(updatedCoach);
     setSelectedCoach(updatedCoach);
+  };
+  
+  const handleRemoveCoach = (coachId: string) => {
+    removeCoach(coachId);
+    setSelectedCoach(null);
   };
 
   return (
@@ -73,7 +78,7 @@ export default function Home() {
           <ScrollArea className="flex-1">
             <div className="p-6 pt-0">
               {selectedCoach ? (
-                <CoachDetails coach={selectedCoach} onUpdate={handleUpdateCoach} />
+                <CoachDetails coach={selectedCoach} onUpdate={handleUpdateCoach} onRemove={handleRemoveCoach} />
               ) : (
                  <p className="text-center text-muted-foreground">No coach selected.</p>
               )}
