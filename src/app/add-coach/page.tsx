@@ -7,10 +7,10 @@ import type { z } from "zod";
 import { format } from "date-fns";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import dynamic from "next/dynamic";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,6 +19,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { addCoachSchema, workTypes } from "@/lib/schemas";
 import { useCoaches } from "@/hooks/use-coaches";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const Calendar = dynamic(() => import('@/components/ui/calendar').then(mod => mod.Calendar), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-[298px]" />,
+});
 
 export default function AddCoachPage() {
   const { toast } = useToast();

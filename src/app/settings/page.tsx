@@ -4,11 +4,16 @@ import { useState } from 'react';
 import { useHolidays } from '@/hooks/use-holidays';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar } from '@/components/ui/calendar';
 import { format } from 'date-fns';
 import { Trash2, CalendarPlus } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import dynamic from 'next/dynamic';
+
+const Calendar = dynamic(() => import('@/components/ui/calendar').then(mod => mod.Calendar), {
+  ssr: false,
+  loading: () => <Skeleton className="h-[298px] w-[350px] rounded-md border" />
+});
 
 export default function SettingsPage() {
   const { holidays, addHoliday, removeHoliday, isLoading } = useHolidays();
