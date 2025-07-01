@@ -27,7 +27,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl">Settings</h1>
         <p className="mt-4 text-lg text-muted-foreground">

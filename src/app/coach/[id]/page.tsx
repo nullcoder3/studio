@@ -15,7 +15,7 @@ import { format } from 'date-fns';
 
 function CoachDetailsSkeleton() {
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 animate-pulse">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 animate-pulse">
       <div className="mb-8">
         <Skeleton className="h-12 w-1/3" />
         <Skeleton className="h-6 w-2/3 mt-4" />
@@ -90,7 +90,7 @@ export default function CoachDetailsPage() {
   const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">
           Coach {coach.coachNumber}

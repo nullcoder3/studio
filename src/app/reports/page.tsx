@@ -70,7 +70,7 @@ export default function ReportsPage() {
   }, [coaches, selectedMonth, selectedYear, isLoading]);
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 animate-fade-in-down gap-4">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl flex items-center gap-3">

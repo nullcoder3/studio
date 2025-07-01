@@ -189,7 +189,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                 )}
             </div>
           </CardHeader>
-          <CardContent className="p-0 mt-4">
+          <CardContent className="p-0 mt-6">
             <Table>
               <TableHeader>
                 <TableRow>

@@ -79,7 +79,7 @@ export function Header() {
                  <Link
                   href="/reports"
                   onClick={handleLinkClick}
-                  className="flex items-center gap-3 text-lg text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-3 text-base font-medium text-muted-foreground hover:text-foreground"
                 >
                   <BarChart2 className="h-5 w-5" />
                   Monthly Reports
@@ -87,7 +87,7 @@ export function Header() {
                 <Link
                   href="/materials"
                   onClick={handleLinkClick}
-                  className="flex items-center gap-3 text-lg text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-3 text-base font-medium text-muted-foreground hover:text-foreground"
                 >
                   <HardHat className="h-5 w-5" />
                   Manage Materials
@@ -95,7 +95,7 @@ export function Header() {
                 <Link
                   href="/settings"
                   onClick={handleLinkClick}
-                  className="flex items-center gap-3 text-lg text-muted-foreground hover:text-foreground"
+                  className="flex items-center gap-3 text-base font-medium text-muted-foreground hover:text-foreground"
                 >
                   <Settings className="h-5 w-5" />
                   Settings

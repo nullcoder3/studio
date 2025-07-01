@@ -41,10 +41,11 @@ export default function Home() {
 
   return (
     <>
-      <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 animate-fade-in-down gap-4">
           <div>
             <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl text-foreground">Active Coaches</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl">A list of all active coaches. Click one to see details.</p>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">

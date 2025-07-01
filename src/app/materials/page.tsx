@@ -75,7 +75,7 @@ export default function MaterialsPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 animate-fade-in-down gap-4">
         <div>
           <h1 className="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl flex items-center gap-3">
@@ -149,7 +149,13 @@ export default function MaterialsPage() {
                         <FormItem>
                           <FormLabel>Stock Quantity</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="Current stock" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.valueAsNumber)} />
+                            <Input 
+                                type="number" 
+                                placeholder="Current stock" 
+                                {...field} 
+                                value={field.value ?? ''} 
+                                onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)} 
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -162,7 +168,13 @@ export default function MaterialsPage() {
                         <FormItem>
                           <FormLabel>Minimum Stock Level</FormLabel>
                           <FormControl>
-                            <Input type="number" placeholder="Minimum stock alert level" {...field} value={field.value ?? ''} onChange={e => field.onChange(e.target.valueAsNumber)} />
+                            <Input 
+                                type="number" 
+                                placeholder="Minimum stock alert level" 
+                                {...field} 
+                                value={field.value ?? ''} 
+                                onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)} 
+                            />
                           </FormControl>
                           <FormMessage />
                         </FormItem>

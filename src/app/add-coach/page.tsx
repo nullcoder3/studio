@@ -21,6 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import { addCoachSchema, workTypes } from "@/lib/schemas";
 import { useCoaches } from "@/hooks/use-coaches";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const Calendar = dynamic(() => import('@/components/ui/calendar').then(mod => mod.Calendar), {
   ssr: false,
@@ -68,139 +69,143 @@ export default function AddCoachPage() {
         <h1 className="text-3xl font-extrabold tracking-tighter sm:text-4xl text-foreground">Add New Coach</h1>
         <p className="text-muted-foreground mt-3 max-w-md mx-auto">Fill in the details to add a new coach to the workshop.</p>
       </div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <FormField
-            control={form.control}
-            name="coachNumber"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Coach Number *</FormLabel>
-                <FormControl>
-                  <Input placeholder="e.g., C-101, LHB-045" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="offeredDate"
-            render={({ field }) => (
-              <FormItem className="flex flex-col">
-                <FormLabel>Offered Date *</FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
+      <Card className="shadow-soft-lg">
+        <CardContent className="p-6">
+            <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                control={form.control}
+                name="coachNumber"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Coach Number *</FormLabel>
                     <FormControl>
-                      <Button
-                        variant={"outline"}
-                        className={cn(
-                          "w-full justify-start text-left font-normal",
-                          !field.value && "text-muted-foreground"
-                        )}
-                      >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {field.value ? (
-                          format(field.value, "PPP")
-                        ) : (
-                          <span>Pick a date</span>
-                        )}
-                      </Button>
+                        <Input placeholder="e.g., C-101, LHB-045" {...field} />
                     </FormControl>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={field.value}
-                      onSelect={field.onChange}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="workTypes"
-            render={() => (
-              <FormItem>
-                <div className="mb-2">
-                  <FormLabel>Work Types Required *</FormLabel>
-                </div>
-                <div className="p-4 border rounded-md space-y-3 max-h-48 overflow-y-auto bg-background/50">
-                  {workTypes.map((item) => (
-                    <FormField
-                      key={item}
-                      control={form.control}
-                      name="workTypes"
-                      render={({ field }) => {
-                        return (
-                          <FormItem
-                            key={item}
-                            className="flex flex-row items-center space-x-3 space-y-0"
-                          >
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(item)}
-                                onCheckedChange={(checked) => {
-                                  const currentValue = field.value || [];
-                                  return checked
-                                    ? field.onChange([...currentValue, item])
-                                    : field.onChange(
-                                        currentValue.filter(
-                                          (value) => value !== item
-                                        )
-                                      );
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal text-sm">
-                              {item}
-                            </FormLabel>
-                          </FormItem>
-                        );
-                      }}
-                    />
-                  ))}
-                </div>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="additionalNotes"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Additional Notes</FormLabel>
-                <FormControl>
-                  <Textarea
-                    placeholder="Any additional information..."
-                    className="min-h-[120px]"
-                    {...field}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-end gap-4 pt-4">
-            <Button type="button" variant="ghost" onClick={() => router.back()}>
-                Cancel
-            </Button>
-            <Button type="submit" className="min-w-[200px]" disabled={isSubmitting}>
-                {isSubmitting ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                ) : (
-                    <TrainTrack className="mr-2 h-4 w-4" />
+                    <FormMessage />
+                    </FormItem>
                 )}
-                Add Coach to Workshop
-            </Button>
-          </div>
-        </form>
-      </Form>
+                />
+                <FormField
+                control={form.control}
+                name="offeredDate"
+                render={({ field }) => (
+                    <FormItem className="flex flex-col">
+                    <FormLabel>Offered Date *</FormLabel>
+                    <Popover>
+                        <PopoverTrigger asChild>
+                        <FormControl>
+                            <Button
+                            variant={"outline"}
+                            className={cn(
+                                "w-full justify-start text-left font-normal",
+                                !field.value && "text-muted-foreground"
+                            )}
+                            >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {field.value ? (
+                                format(field.value, "PPP")
+                            ) : (
+                                <span>Pick a date</span>
+                            )}
+                            </Button>
+                        </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            mode="single"
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            initialFocus
+                        />
+                        </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="workTypes"
+                render={() => (
+                    <FormItem>
+                    <div className="mb-2">
+                        <FormLabel>Work Types Required *</FormLabel>
+                    </div>
+                    <div className="p-4 border rounded-md space-y-3 max-h-48 overflow-y-auto bg-background/50">
+                        {workTypes.map((item) => (
+                        <FormField
+                            key={item}
+                            control={form.control}
+                            name="workTypes"
+                            render={({ field }) => {
+                            return (
+                                <FormItem
+                                key={item}
+                                className="flex flex-row items-center space-x-3 space-y-0"
+                                >
+                                <FormControl>
+                                    <Checkbox
+                                    checked={field.value?.includes(item)}
+                                    onCheckedChange={(checked) => {
+                                        const currentValue = field.value || [];
+                                        return checked
+                                        ? field.onChange([...currentValue, item])
+                                        : field.onChange(
+                                            currentValue.filter(
+                                            (value) => value !== item
+                                            )
+                                        );
+                                    }}
+                                    />
+                                </FormControl>
+                                <FormLabel className="font-normal text-sm">
+                                    {item}
+                                </FormLabel>
+                                </FormItem>
+                            );
+                            }}
+                        />
+                        ))}
+                    </div>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <FormField
+                control={form.control}
+                name="additionalNotes"
+                render={({ field }) => (
+                    <FormItem>
+                    <FormLabel>Additional Notes</FormLabel>
+                    <FormControl>
+                        <Textarea
+                        placeholder="Any additional information..."
+                        className="min-h-[120px]"
+                        {...field}
+                        />
+                    </FormControl>
+                    <FormMessage />
+                    </FormItem>
+                )}
+                />
+                <div className="flex justify-end gap-4 pt-4">
+                <Button type="button" variant="ghost" onClick={() => router.back()}>
+                    Cancel
+                </Button>
+                <Button type="submit" className="min-w-[200px]" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    ) : (
+                        <TrainTrack className="mr-2 h-4 w-4" />
+                    )}
+                    Register Coach
+                </Button>
+                </div>
+            </form>
+            </Form>
+        </CardContent>
+      </Card>
     </div>
   );
 }

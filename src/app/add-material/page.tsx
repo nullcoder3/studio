@@ -66,7 +66,7 @@ export default function AddMaterialPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-3xl">
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 max-w-3xl">
       <div className="mb-8">
         <h1 className="text-3xl font-bold font-headline tracking-tight flex items-center gap-2">
             <HardHat className="h-8 w-8 text-primary" /> Material Management
@@ -127,7 +127,13 @@ export default function AddMaterialPage() {
                     <FormItem>
                       <FormLabel>Stock Quantity</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Current stock" {...field} value={field.value ?? ''} />
+                        <Input 
+                          type="number" 
+                          placeholder="Current stock" 
+                          {...field} 
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -140,7 +146,13 @@ export default function AddMaterialPage() {
                     <FormItem>
                       <FormLabel>Minimum Stock Level</FormLabel>
                       <FormControl>
-                        <Input type="number" placeholder="Minimum stock alert level" {...field} value={field.value ?? ''} />
+                        <Input 
+                          type="number" 
+                          placeholder="Minimum stock alert level" 
+                          {...field} 
+                          value={field.value ?? ''}
+                          onChange={e => field.onChange(e.target.value === '' ? undefined : e.target.valueAsNumber)}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
