@@ -76,7 +76,7 @@ export default function CoachDetailsPage() {
   const { materials: allMaterials, isLoading: isLoadingMaterials } = useMaterials();
 
 
-  if (isLoadingCoaches || !params.id || isLoadingMaterials) {
+  if (isLoadingCoaches || !params.id || isLoadingMaterials || isLoadingHolidays) {
     return <CoachDetailsSkeleton />;
   }
 
@@ -87,7 +87,7 @@ export default function CoachDetailsPage() {
     notFound();
   }
 
-  const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
+  const workingDays = calculateWorkingDays(coach.offeredDate, holidays.map(h => h.date));
 
   return (
     <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8">
@@ -117,11 +117,7 @@ export default function CoachDetailsPage() {
               <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
               <div>
                 <p className="font-semibold">Working Days</p>
-                {isLoadingHolidays ? (
-                  <Skeleton className="h-5 w-12" />
-                ) : (
-                  <p className="text-sm text-muted-foreground">{workingDays} days</p>
-                )}
+                <p className="text-sm text-muted-foreground">{workingDays} days</p>
               </div>
             </div>
             <div className="flex items-start pt-2">

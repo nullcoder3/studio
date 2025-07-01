@@ -51,7 +51,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
   const [showAddForm, setShowAddForm] = React.useState(false);
   const [newEntries, setNewEntries] = React.useState([{ key: crypto.randomUUID(), materialId: '', quantity: 1, date: new Date() }]);
 
-  const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
+  const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays.map(h => h.date));
 
   const getMaterialDetails = (materialId: string) => {
     return allMaterials.find(m => m.id === materialId);

@@ -1,103 +1,76 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from 'react';
-import { initialCoaches } from '@/lib/data';
+import { useState, useEffect } from 'react';
 import type { Coach } from '@/lib/types';
-import { parseISO } from 'date-fns';
-
-const COACHES_STORAGE_KEY = 'coachTrackCoaches';
-
-// Helper to parse dates from stringified JSON
-const coachReviver = (key: string, value: any) => {
-  if ((key === 'offeredDate' || key === 'date' || key === 'completionDate') && typeof value === 'string') {
-    return parseISO(value);
-  }
-  return value;
-};
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, doc, addDoc, updateDoc, deleteDoc, Timestamp, orderBy, query } from 'firebase/firestore';
 
 export function useCoaches() {
   const [coaches, setCoaches] = useState<Coach[] | null>(null);
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(COACHES_STORAGE_KEY);
-      if (item) {
-        setCoaches(JSON.parse(item, coachReviver));
-      } else {
-        // Initialize with default data if nothing in localStorage
-        setCoaches(initialCoaches);
-        window.localStorage.setItem(COACHES_STORAGE_KEY, JSON.stringify(initialCoaches));
-      }
-    } catch (error) {
-      console.error("Failed to parse coaches from localStorage", error);
-      setCoaches(initialCoaches);
-    }
+    const q = query(collection(db, 'coaches'), orderBy('offeredDate', 'desc'));
+    
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const coachesData: Coach[] = querySnapshot.docs.map(doc => {
+            const data = doc.data();
+            return {
+                id: doc.id,
+                coachNumber: data.coachNumber,
+                offeredDate: (data.offeredDate as Timestamp).toDate(),
+                workTypes: data.workTypes,
+                notes: data.notes,
+                materials: data.materials.map((m: any) => ({
+                    ...m,
+                    date: (m.date as Timestamp).toDate()
+                })),
+                status: data.status,
+                completionDate: data.completionDate ? (data.completionDate as Timestamp).toDate() : undefined,
+            } as Coach;
+        });
+        setCoaches(coachesData);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const updateLocalStorage = (newCoaches: Coach[]) => {
-     try {
-       window.localStorage.setItem(COACHES_STORAGE_KEY, JSON.stringify(newCoaches));
-     } catch (error) {
-       console.error("Failed to save coaches to localStorage", error);
-     }
-  }
-
-  const addCoach = (newCoachData: Omit<Coach, 'id' | 'materials' | 'status' | 'completionDate'>) => {
-    setCoaches(prevCoaches => {
-        const currentCoaches = prevCoaches ?? [];
-        const newCoach: Coach = {
-            id: `coach-${crypto.randomUUID()}`,
-            coachNumber: newCoachData.coachNumber,
-            offeredDate: newCoachData.offeredDate,
-            workTypes: newCoachData.workTypes,
-            notes: newCoachData.notes,
-            materials: [],
-            status: 'active',
-        };
-        const newCoaches = [newCoach, ...currentCoaches];
-        updateLocalStorage(newCoaches);
-        return newCoaches;
+  const addCoach = async (newCoachData: Omit<Coach, 'id' | 'materials' | 'status' | 'completionDate'>) => {
+    await addDoc(collection(db, 'coaches'), {
+        ...newCoachData,
+        offeredDate: Timestamp.fromDate(newCoachData.offeredDate),
+        materials: [],
+        status: 'active',
     });
   };
 
-  const updateCoach = (updatedCoach: Coach) => {
-    setCoaches(prevCoaches => {
-        const currentCoaches = prevCoaches ?? [];
-        const coachIndex = currentCoaches.findIndex(c => c.id === updatedCoach.id);
-        if (coachIndex === -1) {
-            console.error("Coach not found for update");
-            return currentCoaches;
-        }
-        const newCoaches = [...currentCoaches];
-        newCoaches[coachIndex] = updatedCoach;
-        updateLocalStorage(newCoaches);
-        return newCoaches;
-    });
+  const updateCoach = async (updatedCoach: Coach) => {
+    const coachDocRef = doc(db, 'coaches', updatedCoach.id);
+    const { id, ...coachData } = updatedCoach;
+    
+    // Convert Date objects back to Firestore Timestamps before updating
+    const firestoreReadyData = {
+        ...coachData,
+        offeredDate: Timestamp.fromDate(coachData.offeredDate),
+        completionDate: coachData.completionDate ? Timestamp.fromDate(coachData.completionDate) : null,
+        materials: coachData.materials.map(m => ({ ...m, date: Timestamp.fromDate(m.date) })),
+    };
+    
+    await updateDoc(coachDocRef, firestoreReadyData);
   };
 
-  const removeCoach = (coachId: string) => {
-    setCoaches(prevCoaches => {
-      const currentCoaches = prevCoaches ?? [];
-      const newCoaches = currentCoaches.filter(c => c.id !== coachId);
-      updateLocalStorage(newCoaches);
-      return newCoaches;
-    });
+  const removeCoach = async (coachId: string) => {
+    const coachDocRef = doc(db, 'coaches', coachId);
+    await deleteDoc(coachDocRef);
   };
 
-  const markCoachAsCompleted = (coachId: string) => {
-    setCoaches(prevCoaches => {
-      const currentCoaches = prevCoaches ?? [];
-      const newCoaches = currentCoaches.map(coach =>
-        coach.id === coachId
-          ? { ...coach, status: 'completed' as const, completionDate: new Date() }
-          : coach
-      );
-      updateLocalStorage(newCoaches);
-      return newCoaches;
+  const markCoachAsCompleted = async (coachId: string) => {
+    const coachDocRef = doc(db, 'coaches', coachId);
+    await updateDoc(coachDocRef, {
+      status: 'completed',
+      completionDate: Timestamp.now()
     });
   };
-
 
   const isLoading = coaches === null;
 

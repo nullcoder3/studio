@@ -1,56 +1,42 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
-import { isSameDay, parseISO } from 'date-fns';
-
-const HOLIDAYS_STORAGE_KEY = 'coachTrackHolidays';
+import type { Holiday } from '@/lib/types';
+import { isSameDay } from 'date-fns';
+import { db } from '@/lib/firebase';
+import { collection, onSnapshot, addDoc, deleteDoc, doc, Timestamp } from 'firebase/firestore';
 
 export function useHolidays() {
-  const [holidays, setHolidays] = useState<Date[] | null>(null);
+  const [holidays, setHolidays] = useState<Holiday[] | null>(null);
 
   useEffect(() => {
-    try {
-      const item = window.localStorage.getItem(HOLIDAYS_STORAGE_KEY);
-      if (item) {
-        const parsedHolidays = JSON.parse(item).map((dateStr: string) => parseISO(dateStr));
-        setHolidays(parsedHolidays);
-      } else {
-        setHolidays([]);
-      }
-    } catch (error) {
-      console.error("Failed to parse holidays from localStorage", error);
-      setHolidays([]);
-    }
+    const holidaysCollection = collection(db, 'holidays');
+    const unsubscribe = onSnapshot(holidaysCollection, (snapshot) => {
+      const holidaysData = snapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          date: (data.date as Timestamp).toDate(),
+        };
+      });
+      setHolidays(holidaysData.sort((a, b) => a.date.getTime() - b.date.getTime()));
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const updateLocalStorage = (newHolidays: Date[]) => {
-     try {
-       const holidaysToStore = newHolidays.map(date => date.toISOString());
-       window.localStorage.setItem(HOLIDAYS_STORAGE_KEY, JSON.stringify(holidaysToStore));
-     } catch (error) {
-       console.error("Failed to save holidays to localStorage", error);
-     }
-  }
-
-  const addHoliday = (date: Date) => {
-    setHolidays(prevHolidays => {
-      const currentHolidays = prevHolidays ?? [];
-      if (!currentHolidays.some(h => isSameDay(h, date))) {
-        const newHolidays = [...currentHolidays, date].sort((a,b) => a.getTime() - b.getTime());
-        updateLocalStorage(newHolidays);
-        return newHolidays;
-      }
-      return currentHolidays;
-    });
+  const addHoliday = async (date: Date) => {
+    if (!holidays?.some(h => isSameDay(h.date, date))) {
+        await addDoc(collection(db, 'holidays'), {
+            date: Timestamp.fromDate(date),
+        });
+    }
   };
 
-  const removeHoliday = (date: Date) => {
-    setHolidays(prevHolidays => {
-        const currentHolidays = prevHolidays ?? [];
-        const newHolidays = currentHolidays.filter(h => !isSameDay(h, date));
-        updateLocalStorage(newHolidays);
-        return newHolidays;
-    });
+  const removeHoliday = async (holidayId: string) => {
+    const holidayDocRef = doc(db, 'holidays', holidayId);
+    await deleteDoc(holidayDocRef);
   };
 
   const isLoading = holidays === null;
