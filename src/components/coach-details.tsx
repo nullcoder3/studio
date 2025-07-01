@@ -2,7 +2,7 @@
 "use client";
 
 import * as React from 'react';
-import type { Coach, UsedMaterial } from '@/lib/types';
+import type { Coach } from '@/lib/types';
 import { useHolidays } from '@/hooks/use-holidays';
 import { useMaterials } from '@/hooks/use-materials';
 import { calculateWorkingDays } from '@/lib/date-utils';
@@ -42,10 +42,6 @@ export function CoachDetails({ coach, onUpdate }: CoachDetailsProps) {
 
   const getMaterialDetails = (materialId: string) => {
     return allMaterials.find(m => m.id === materialId);
-  }
-
-  const handleAddEntry = () => {
-    setNewEntries([...newEntries, { key: crypto.randomUUID(), materialId: '', quantity: 1, date: new Date() }]);
   }
 
   const handleRemoveEntry = (key: string) => {
@@ -232,10 +228,7 @@ export function CoachDetails({ coach, onUpdate }: CoachDetailsProps) {
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-between mt-6">
-                  <Button variant="outline" onClick={handleAddEntry}>
-                    <Plus className="mr-2 h-4 w-4" /> Add Entry
-                  </Button>
+                <div className="flex justify-end mt-6">
                   <div className="space-x-2">
                     <Button variant="ghost" onClick={() => { setShowAddForm(false); setNewEntries([{ key: crypto.randomUUID(), materialId: '', quantity: 1, date: new Date() }])}}>Cancel</Button>
                     <Button onClick={handleSave}>Save Materials</Button>
