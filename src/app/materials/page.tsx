@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -6,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { PackagePlus, HardHat, Loader2 } from "lucide-react";
+import { PackagePlus, HardHat, Loader2, AlertCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,7 +21,6 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-  DialogClose,
 } from "@/components/ui/dialog";
 import {
   Form,
@@ -78,18 +78,18 @@ export default function MaterialsPage() {
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 animate-fade-in-down gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-primary font-headline flex items-center gap-3">
-            <HardHat className="h-10 w-10" />
+          <h1 className="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl flex items-center gap-3">
+            <HardHat className="h-10 w-10 text-primary" />
             Materials Inventory
           </h1>
-          <p className="mt-2 text-lg text-muted-foreground">
+          <p className="mt-4 text-lg text-muted-foreground">
             A list of all materials in the workshop.
           </p>
         </div>
         <div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="w-full md:w-auto">
+              <Button size="lg">
                 <PackagePlus />
                 Add New Material
               </Button>
@@ -220,7 +220,7 @@ export default function MaterialsPage() {
                     )}
                   />
                   <DialogFooter>
-                    <Button type="button" variant="outline" onClick={() => { form.reset(); setIsDialogOpen(false); }}>
+                    <Button type="button" variant="ghost" onClick={() => { form.reset(); setIsDialogOpen(false); }}>
                       Cancel
                     </Button>
                     <Button type="submit" disabled={form.formState.isSubmitting}>
@@ -234,7 +234,7 @@ export default function MaterialsPage() {
           </Dialog>
         </div>
       </div>
-      <Card>
+      <Card className="shadow-soft-lg">
         <CardHeader>
           <CardTitle>All Materials</CardTitle>
           <CardDescription>Browse and manage all workshop materials.</CardDescription>
@@ -244,7 +244,7 @@ export default function MaterialsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Material Name</TableHead>
-                <TableHead>Material Code</TableHead>
+                <TableHead>Code</TableHead>
                 <TableHead>Unit</TableHead>
                 <TableHead className="text-right">Stock</TableHead>
                 <TableHead>Ownership</TableHead>
@@ -260,24 +260,32 @@ export default function MaterialsPage() {
                   </TableRow>
                 ))
               ) : materials.length > 0 ? (
-                materials.map((material) => (
-                  <TableRow key={material.id}>
-                    <TableCell className="font-medium">{material.name}</TableCell>
-                    <TableCell>{material.materialCode}</TableCell>
-                    <TableCell>{material.unit}</TableCell>
-                    <TableCell className="text-right">{material.stockQuantity ?? 0}</TableCell>
-                    <TableCell>
-                      {material.ownership === 'Railway' ? (
-                         <Badge variant="secondary">Railway (R)</Badge>
-                      ) : (
-                        <Badge variant="outline">SSWPI (S)</Badge>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))
+                materials.map((material) => {
+                  const isLowStock = material.minStockLevel && material.stockQuantity && material.stockQuantity < material.minStockLevel;
+                  return (
+                    <TableRow key={material.id}>
+                      <TableCell className="font-medium">{material.name}</TableCell>
+                      <TableCell>{material.materialCode}</TableCell>
+                      <TableCell>{material.unit}</TableCell>
+                      <TableCell className="text-right font-medium">
+                        <div className="flex items-center justify-end gap-2">
+                           {isLowStock && <AlertCircle className="h-4 w-4 text-destructive" title={`Low stock warning: Minimum is ${material.minStockLevel}`} />}
+                           <span>{material.stockQuantity ?? 0}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {material.ownership === 'Railway' ? (
+                           <Badge variant="secondary">Railway (R)</Badge>
+                        ) : (
+                          <Badge variant="outline">SSWPI (S)</Badge>
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
               ) : (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
+                  <TableCell colSpan={5} className="text-center text-muted-foreground py-16">
                     No materials found.
                   </TableCell>
                 </TableRow>

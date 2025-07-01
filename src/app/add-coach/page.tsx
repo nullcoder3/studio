@@ -1,3 +1,4 @@
+
 "use client";
 
 import * as React from "react";
@@ -5,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, TrainTrack } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import dynamic from "next/dynamic";
 
@@ -62,10 +63,10 @@ export default function AddCoachPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8 max-w-2xl">
-      <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold font-headline tracking-tight">Add New Coach</h1>
-        <p className="text-muted-foreground mt-2">Fill in the details to add a new coach to the workshop.</p>
+    <div className="container mx-auto py-10 px-4 sm:px-6 lg:px-8 max-w-2xl">
+      <div className="mb-10 text-center">
+        <h1 className="text-3xl font-extrabold tracking-tighter sm:text-4xl text-foreground">Add New Coach</h1>
+        <p className="text-muted-foreground mt-3 max-w-md mx-auto">Fill in the details to add a new coach to the workshop.</p>
       </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -76,7 +77,7 @@ export default function AddCoachPage() {
               <FormItem>
                 <FormLabel>Coach Number *</FormLabel>
                 <FormControl>
-                  <Input placeholder="e.g., LHB-001, ICF-045" {...field} />
+                  <Input placeholder="e.g., C-101, LHB-045" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -128,7 +129,7 @@ export default function AddCoachPage() {
                 <div className="mb-2">
                   <FormLabel>Work Types Required *</FormLabel>
                 </div>
-                <div className="p-4 border rounded-md space-y-3 max-h-48 overflow-y-auto">
+                <div className="p-4 border rounded-md space-y-3 max-h-48 overflow-y-auto bg-background/50">
                   {workTypes.map((item) => (
                     <FormField
                       key={item}
@@ -177,7 +178,7 @@ export default function AddCoachPage() {
                 <FormControl>
                   <Textarea
                     placeholder="Any additional information..."
-                    className="min-h-[100px]"
+                    className="min-h-[120px]"
                     {...field}
                   />
                 </FormControl>
@@ -185,10 +186,19 @@ export default function AddCoachPage() {
               </FormItem>
             )}
           />
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Add Coach to Workshop
-          </Button>
+          <div className="flex justify-end gap-4 pt-4">
+            <Button type="button" variant="ghost" onClick={() => router.back()}>
+                Cancel
+            </Button>
+            <Button type="submit" className="min-w-[200px]" disabled={isSubmitting}>
+                {isSubmitting ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                ) : (
+                    <TrainTrack className="mr-2 h-4 w-4" />
+                )}
+                Add Coach to Workshop
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

@@ -54,6 +54,9 @@ export default {
         md: 'calc(var(--radius) - 2px)',
         sm: 'calc(var(--radius) - 4px)',
       },
+      boxShadow: {
+        'soft-lg': '0 4px 14px 0 rgba(0, 0, 0, 0.05)'
+      },
       keyframes: {
         'fade-in-down': {
           '0%': {
@@ -77,8 +80,8 @@ export default {
         },
       },
       animation: {
-        'fade-in-down': 'fade-in-down 0.5s ease-in-out',
-        'fade-in-up': 'fade-in-up 0.5s ease-in-out',
+        'fade-in-down': 'fade-in-down 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+        'fade-in-up': 'fade-in-up 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
       },
     },
   },

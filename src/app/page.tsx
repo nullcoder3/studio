@@ -44,30 +44,30 @@ export default function Home() {
       <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-8 animate-fade-in-down gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">Active Coaches</h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              A list of all coaches currently in service or under maintenance.
+            <h1 className="text-4xl font-extrabold tracking-tighter sm:text-5xl lg:text-6xl text-foreground">Active Coaches</h1>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl">
+              A list of all coaches currently in service or under maintenance. Click a coach to view details and manage materials.
             </p>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
           {isLoading ? (
             Array.from({ length: 10 }).map((_, index) => (
-              <div key={index}>
-                <Card className="h-40 flex items-center justify-center">
+              <Card key={index} className="h-40 animate-pulse">
+                <CardContent className="flex items-center justify-center h-full">
                    <Skeleton className="h-10 w-24" />
-                </Card>
-              </div>
+                </CardContent>
+              </Card>
             ))
           ) : activeCoaches.map((coach, index) => (
             <button
               onClick={() => setSelectedCoach(coach)}
               key={coach.id}
               className="group block animate-fade-in-up text-left"
-              style={{ animationDelay: `${index * 100}ms` }}
+              style={{ animationDelay: `${index * 50}ms` }}
             >
-              <Card className="h-40 flex items-center justify-center transition-all duration-300 ease-in-out hover:shadow-lg hover:border-primary/50 hover:-translate-y-1">
-                <CardContent className="p-0">
+              <Card className="h-40 transition-all duration-300 ease-in-out group-hover:shadow-soft-lg group-hover:border-primary group-hover:-translate-y-1">
+                <CardContent className="p-0 h-full flex items-center justify-center">
                   <span className="text-4xl font-extrabold tracking-wider text-foreground group-hover:text-primary transition-colors">
                     {coach.coachNumber}
                   </span>
@@ -82,11 +82,11 @@ export default function Home() {
       <Sheet open={!!selectedCoach} onOpenChange={(isOpen) => { if (!isOpen) setSelectedCoach(null); }}>
         <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 flex flex-col">
           {selectedCoach && (
-            <SheetHeader className="p-6 pb-2">
-              <SheetTitle className="text-4xl font-bold tracking-tight text-primary font-headline">
+            <SheetHeader className="p-6 pb-2 border-b">
+              <SheetTitle className="text-3xl font-extrabold tracking-tight text-primary">
                 Coach {selectedCoach.coachNumber}
               </SheetTitle>
-              <SheetDescription className="text-lg text-muted-foreground pt-2 flex items-center gap-2">
+              <SheetDescription className="text-lg text-muted-foreground pt-1 flex items-center gap-2">
                  {selectedCoach.status === 'completed' ? (
                   <>
                     <CheckCircle className="h-5 w-5 text-green-500" />
@@ -99,7 +99,7 @@ export default function Home() {
             </SheetHeader>
           )}
           <ScrollArea className="flex-1">
-            <div className="p-6 pt-0">
+            <div className="p-6 pt-4">
               {selectedCoach ? (
                 <CoachDetails 
                   coach={selectedCoach} 
@@ -108,7 +108,7 @@ export default function Home() {
                   onMarkCompleted={handleMarkCompleted}
                 />
               ) : (
-                 <p className="text-center text-muted-foreground">No coach selected.</p>
+                 <p className="text-center text-muted-foreground py-10">No coach selected.</p>
               )}
             </div>
           </ScrollArea>
@@ -118,23 +118,23 @@ export default function Home() {
       {/* Completed Coaches Sheet */}
       <Sheet open={isCompletedSheetOpen} onOpenChange={setIsCompletedSheetOpen}>
         <SheetContent className="w-full sm:max-w-2xl md:max-w-3xl p-0 flex flex-col">
-          <SheetHeader className="p-6">
-            <SheetTitle className="text-4xl font-bold tracking-tight text-primary font-headline">
+          <SheetHeader className="p-6 border-b">
+            <SheetTitle className="text-3xl font-extrabold tracking-tight text-primary">
               Completed Coaches
             </SheetTitle>
-            <SheetDescription className="text-lg text-muted-foreground pt-2">
+            <SheetDescription className="text-lg text-muted-foreground pt-1">
               A list of all coaches that have completed their service.
             </SheetDescription>
           </SheetHeader>
           <ScrollArea className="flex-1">
-            <div className="p-6 pt-0">
+            <div className="p-6">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Coach Number</TableHead>
-                    <TableHead>Date Offered</TableHead>
-                    <TableHead>Date Completed</TableHead>
-                    <TableHead>Status</TableHead>
+                    <TableHead className="font-semibold">Coach Number</TableHead>
+                    <TableHead className="font-semibold">Date Offered</TableHead>
+                    <TableHead className="font-semibold">Date Completed</TableHead>
+                    <TableHead className="font-semibold">Status</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -145,8 +145,8 @@ export default function Home() {
                         <TableCell>{format(coach.offeredDate, 'PPP')}</TableCell>
                         <TableCell>{coach.completionDate ? format(coach.completionDate, 'PPP') : 'N/A'}</TableCell>
                         <TableCell>
-                          <Badge variant="secondary" className="text-green-500 border-green-500/30">
-                             <CheckCircle className="mr-1 h-3 w-3" /> Completed
+                          <Badge variant="outline" className="text-green-400 border-green-400/40">
+                             <CheckCircle className="mr-1.5 h-3.5 w-3.5" /> Completed
                           </Badge>
                         </TableCell>
                       </TableRow>
@@ -167,7 +167,7 @@ export default function Home() {
 
       {/* FABs */}
       <Button
-        className="fixed bottom-8 left-8 h-16 w-16 rounded-full shadow-lg z-50 animate-fade-in-up"
+        className="fixed bottom-8 left-8 h-16 w-16 rounded-full shadow-soft-lg z-50 animate-fade-in-up transition-transform hover:scale-105"
         aria-label="View Completed Coaches"
         onClick={() => setIsCompletedSheetOpen(true)}
       >
@@ -175,7 +175,7 @@ export default function Home() {
       </Button>
       <Button
         asChild
-        className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-lg z-50 animate-fade-in-up"
+        className="fixed bottom-8 right-8 h-16 w-16 rounded-full shadow-soft-lg z-50 animate-fade-in-up transition-transform hover:scale-105"
         aria-label="Add Coach"
       >
         <Link href="/add-coach">

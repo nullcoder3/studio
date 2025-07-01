@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -12,7 +13,7 @@ import dynamic from 'next/dynamic';
 
 const Calendar = dynamic(() => import('@/components/ui/calendar').then(mod => mod.Calendar), {
   ssr: false,
-  loading: () => <Skeleton className="h-[298px] w-[350px] rounded-md border" />
+  loading: () => <Skeleton className="h-[298px] w-full max-w-[350px] rounded-md border" />
 });
 
 export default function SettingsPage() {
@@ -28,59 +29,57 @@ export default function SettingsPage() {
   return (
     <div className="container mx-auto py-8 px-4 sm:px-6 lg:px-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">Settings</h1>
-        <p className="mt-2 text-lg text-muted-foreground">
+        <h1 className="text-4xl font-extrabold tracking-tighter text-foreground sm:text-5xl">Settings</h1>
+        <p className="mt-4 text-lg text-muted-foreground">
           Configure working day rules and manage holidays.
         </p>
       </div>
 
-      <Card>
+      <Card className="shadow-soft-lg">
         <CardHeader>
           <CardTitle>Manage Holidays</CardTitle>
           <CardDescription>
             Add or remove holidays to be excluded from working day calculations. Sundays are excluded by default.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="font-semibold mb-4 text-lg">Add New Holiday</h3>
-            <div className="flex flex-col items-center">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={setDate}
-                className="rounded-md border"
-              />
-              <Button onClick={handleAddHoliday} className="mt-4 w-full" disabled={!date}>
-                <CalendarPlus className="mr-2 h-4 w-4" />
-                Add Holiday
-              </Button>
-            </div>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-2">
+          <div className="flex flex-col items-center">
+            <h3 className="font-semibold mb-4 text-lg text-center self-start">Add New Holiday</h3>
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              className="rounded-lg border shadow-sm"
+            />
+            <Button onClick={handleAddHoliday} className="mt-4 w-full max-w-[350px]" size="lg" disabled={!date}>
+              <CalendarPlus className="mr-2 h-4 w-4" />
+              Add Holiday
+            </Button>
           </div>
           <div>
             <h3 className="font-semibold mb-4 text-lg">Current Holiday List</h3>
-            <ScrollArea className="h-72 w-full rounded-md border">
-              <div className="p-4">
+            <ScrollArea className="h-80 w-full rounded-lg border bg-background/50">
+              <div className="p-2 sm:p-4">
                 {isLoading ? (
                   <div className="space-y-2">
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
-                    <Skeleton className="h-8 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
                   </div>
                 ) : holidays.length > 0 ? (
                   <ul className="space-y-2">
                     {holidays.map((holiday) => (
-                      <li key={holiday.toISOString()} className="flex justify-between items-center p-2 rounded-md bg-muted/50">
-                        <span>{format(holiday, 'PPP')}</span>
-                        <Button variant="ghost" size="icon" onClick={() => removeHoliday(holiday)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
+                      <li key={holiday.toISOString()} className="flex justify-between items-center p-2.5 rounded-md bg-muted/50 transition-colors hover:bg-muted">
+                        <span className="font-medium">{format(holiday, 'PPP')}</span>
+                        <Button variant="ghost" size="icon" onClick={() => removeHoliday(holiday)} className="text-muted-foreground hover:text-destructive">
+                          <Trash2 className="h-4 w-4" />
                           <span className="sr-only">Remove holiday</span>
                         </Button>
                       </li>
                     ))}
                   </ul>
                 ) : (
-                  <p className="text-muted-foreground text-center pt-8">No holidays added yet.</p>
+                  <p className="text-muted-foreground text-center pt-10">No holidays added yet.</p>
                 )}
               </div>
             </ScrollArea>

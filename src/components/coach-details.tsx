@@ -6,7 +6,7 @@ import type { Coach } from '@/lib/types';
 import { useHolidays } from '@/hooks/use-holidays';
 import { useMaterials } from '@/hooks/use-materials';
 import { calculateWorkingDays } from '@/lib/date-utils';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -91,7 +91,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
       }
     });
 
-    const updatedCoach = { ...coach, materials: updatedMaterials };
+    const updatedCoach = { ...coach, materials: updatedMaterials.sort((a,b) => b.date.getTime() - a.date.getTime()) };
     onUpdate(updatedCoach);
 
     setShowAddForm(false);
@@ -100,15 +100,15 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
 
 
   return (
-    <div className="space-y-6 pt-4">
-        <Card>
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle>Details</CardTitle>
+    <div className="space-y-6">
+        <Card className="shadow-none border-0">
+          <CardHeader className="p-0">
+            <div className="flex justify-between items-start">
+              <CardTitle className="font-bold text-lg">Details</CardTitle>
               {coach.status === 'active' && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
-                    <Button variant="ghost" size="icon" className="text-destructive hover:bg-destructive/10 hover:text-destructive">
+                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-destructive -mt-2">
                       <Trash2 className="h-5 w-5" />
                       <span className="sr-only">Delete Coach</span>
                     </Button>
@@ -135,32 +135,32 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
               )}
             </div>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center">
-              <CalendarIcon className="h-5 w-5 mr-3 text-muted-foreground" />
+          <CardContent className="p-0 mt-4 space-y-5">
+            <div className="flex items-start">
+              <CalendarIcon className="h-5 w-5 mr-4 text-muted-foreground mt-0.5" />
               <div>
-                <p className="font-semibold">Date Offered</p>
+                <p className="font-semibold text-foreground">Date Offered</p>
                 <p className="text-sm text-muted-foreground">{format(coach.offeredDate, 'PPP')}</p>
               </div>
             </div>
-             <div className="flex items-center">
-              <Clock className="h-5 w-5 mr-3 text-muted-foreground" />
+             <div className="flex items-start">
+              <Clock className="h-5 w-5 mr-4 text-muted-foreground mt-0.5" />
               <div>
-                <p className="font-semibold">Working Days</p>
+                <p className="font-semibold text-foreground">Working Days</p>
                 {isLoadingHolidays ? (
-                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-5 w-12 mt-1" />
                 ) : (
                   <p className="text-sm text-muted-foreground">{workingDays} days</p>
                 )}
               </div>
             </div>
-            <div className="flex items-start pt-2">
-              <Wrench className="h-5 w-5 mr-3 text-muted-foreground flex-shrink-0 mt-1" />
+            <div className="flex items-start">
+              <Wrench className="h-5 w-5 mr-4 text-muted-foreground flex-shrink-0 mt-1" />
               <div>
-                <p className="font-semibold">Work Types</p>
-                <div className="flex flex-wrap gap-1 mt-1">
+                <p className="font-semibold text-foreground">Work Types</p>
+                <div className="flex flex-wrap gap-2 mt-2">
                   {coach.workTypes.map((workType) => (
-                    <Badge key={workType} variant="secondary" className="font-normal">
+                    <Badge key={workType} variant="secondary">
                       {workType}
                     </Badge>
                   ))}
@@ -169,28 +169,27 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
             </div>
           </CardContent>
           {coach.status === 'active' && (
-            <CardFooter>
-              <Button className="w-full" onClick={() => onMarkCompleted(coach.id)}>
-                <CheckCircle className="mr-2 h-4 w-4" />
+            <CardFooter className="p-0 mt-6">
+              <Button className="w-full" size="lg" onClick={() => onMarkCompleted(coach.id)}>
+                <CheckCircle className="mr-2 h-5 w-5" />
                 Mark as Completed
               </Button>
             </CardFooter>
           )}
         </Card>
 
-        <Card>
-          <CardHeader>
+        <Card className="shadow-none border-0">
+          <CardHeader className="p-0">
              <div className="flex justify-between items-center">
-                <CardTitle className="flex items-center gap-2"><Box /> Materials ({coach.materials.length})</CardTitle>
+                <CardTitle className="font-bold text-lg flex items-center gap-2.5"><Box className="h-5 w-5" /> Materials ({coach.materials.length})</CardTitle>
                 {coach.status === 'active' && !showAddForm && (
-                    <Button variant="outline" size="sm" onClick={() => setShowAddForm(true)}>
+                    <Button variant="outline" onClick={() => setShowAddForm(true)}>
                         <Plus className="mr-2 h-4 w-4" /> Add Material
                     </Button>
                 )}
             </div>
-            <CardDescription>List of materials consumed by this coach.</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-0 mt-4">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -200,10 +199,10 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {coach.materials.length > 0 ? coach.materials.map((usedMaterial) => {
+                {coach.materials.length > 0 ? coach.materials.map((usedMaterial, index) => {
                   const details = getMaterialDetails(usedMaterial.materialId);
                   return (
-                    <TableRow key={`${usedMaterial.materialId}-${usedMaterial.date.toISOString()}`}>
+                    <TableRow key={`${usedMaterial.materialId}-${usedMaterial.date.toISOString()}-${index}`}>
                       <TableCell className="font-medium">{details?.name ?? 'Unknown'}</TableCell>
                       <TableCell>{usedMaterial.quantity} {details?.unit ?? ''}</TableCell>
                       <TableCell>{format(usedMaterial.date, 'PPP')}</TableCell>
@@ -211,7 +210,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                   )
                 }) : (
                   <TableRow>
-                    <TableCell colSpan={3} className="text-center text-muted-foreground py-6">
+                    <TableCell colSpan={3} className="text-center text-muted-foreground h-24">
                       No materials have been added yet.
                     </TableCell>
                   </TableRow>
@@ -220,12 +219,12 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
             </Table>
             
             {showAddForm && (
-              <div className="mt-6 p-4 border rounded-lg bg-muted/30">
-                <h4 className="font-semibold mb-4 text-lg">Add Materials</h4>
-                <div className="space-y-4">
+              <div className="mt-6 p-4 border rounded-lg bg-background">
+                <h4 className="font-semibold mb-4">Add Materials</h4>
+                <div className="space-y-3">
                   {newEntries.map((entry) => (
-                    <div key={entry.key} className="flex flex-col sm:flex-row gap-2 items-center">
-                       <div className="w-full sm:w-1/2">
+                    <div key={entry.key} className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto_auto] gap-2 items-center">
+                       <div className="w-full">
                           <Select
                             value={entry.materialId}
                             onValueChange={(value) => handleEntryChange(entry.key, 'materialId', value)}
@@ -240,7 +239,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                             </SelectContent>
                           </Select>
                        </div>
-                       <div className="w-full sm:w-1/4">
+                       <div className="w-full sm:w-24">
                           <Input
                             type="number"
                             placeholder="Qty"
@@ -249,7 +248,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                             onChange={(e) => handleEntryChange(entry.key, 'quantity', parseInt(e.target.value) || 1)}
                           />
                        </div>
-                       <div className="w-full sm:w-1/4">
+                       <div className="w-full sm:w-auto">
                         <Popover>
                           <PopoverTrigger asChild>
                             <Button
@@ -260,7 +259,7 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                               )}
                             >
                               <CalendarIcon className="mr-2 h-4 w-4" />
-                              {entry.date ? format(entry.date, "PPP") : <span>Pick a date</span>}
+                              {entry.date ? format(entry.date, "MMM dd") : <span>Pick date</span>}
                             </Button>
                           </PopoverTrigger>
                           <PopoverContent className="w-auto p-0">
@@ -274,16 +273,14 @@ export function CoachDetails({ coach, onUpdate, onRemove, onMarkCompleted }: Coa
                         </Popover>
                        </div>
                        <Button variant="ghost" size="icon" onClick={() => handleRemoveEntry(entry.key)} disabled={newEntries.length <= 1}>
-                         <Trash2 className="h-4 w-4 text-destructive" />
+                         <Trash2 className="h-4 w-4 text-muted-foreground hover:text-destructive" />
                        </Button>
                     </div>
                   ))}
                 </div>
-                <div className="flex justify-end mt-6">
-                  <div className="space-x-2">
+                <div className="flex justify-end mt-4 space-x-2">
                     <Button variant="ghost" onClick={() => { setShowAddForm(false); setNewEntries([{ key: crypto.randomUUID(), materialId: '', quantity: 1, date: new Date() }])}}>Cancel</Button>
                     <Button onClick={handleSave}>Save Materials</Button>
-                  </div>
                 </div>
               </div>
             )}
