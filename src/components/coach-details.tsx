@@ -20,15 +20,7 @@ export function CoachDetails({ coach }: CoachDetailsProps) {
   const workingDays = isLoadingHolidays ? -1 : calculateWorkingDays(coach.offeredDate, holidays);
 
   return (
-    <div className="space-y-6 p-1">
-        <div className="mb-8">
-            <h1 className="text-4xl font-bold tracking-tight text-primary font-headline">
-              Coach {coach.coachNumber}
-            </h1>
-            <p className="mt-2 text-lg text-muted-foreground">
-              Detailed information and material usage for the coach.
-            </p>
-        </div>
+    <div className="space-y-6 pt-4">
         <Card>
           <CardHeader>
             <CardTitle>Details</CardTitle>

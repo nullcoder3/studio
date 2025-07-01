@@ -5,7 +5,7 @@ import type { Coach } from '@/lib/types';
 import { useCoaches } from '@/hooks/use-coaches';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { CoachDetails } from '@/components/coach-details';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -53,9 +53,19 @@ export default function Home() {
       </div>
       
       <Sheet open={!!selectedCoach} onOpenChange={(isOpen) => { if (!isOpen) setSelectedCoach(null); }}>
-        <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0">
-          <ScrollArea className="h-full">
-            <div className="p-6">
+        <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 flex flex-col">
+          {selectedCoach && (
+            <SheetHeader className="p-6 pb-2">
+              <SheetTitle className="text-4xl font-bold tracking-tight text-primary font-headline">
+                Coach {selectedCoach.coachNumber}
+              </SheetTitle>
+              <SheetDescription className="text-lg text-muted-foreground pt-2">
+                Detailed information and material usage for the coach.
+              </SheetDescription>
+            </SheetHeader>
+          )}
+          <ScrollArea className="flex-1">
+            <div className="p-6 pt-0">
               {selectedCoach ? (
                 <CoachDetails coach={selectedCoach} />
               ) : (
