@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useCoaches } from "@/hooks/use-coaches";
+import type { Coach } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BarChart2, Calendar, FileText } from "lucide-react";
@@ -19,7 +20,7 @@ const months = Array.from({ length: 12 }, (_, i) => ({
   label: format(new Date(0, i), 'MMMM'),
 }));
 
-const generateYearOptions = (coaches: any[]) => {
+const generateYearOptions = (coaches: Coach[]) => {
   if (!coaches || coaches.length === 0) {
     return [getYear(new Date())];
   }
